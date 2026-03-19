@@ -40,7 +40,7 @@ describe("Pipeline", () => {
       </body></html>`;
     const result = kajiFromHtml(html);
     expect(result.markdown).toContain("```js");
-    expect(result.markdown).toContain('function hello()');
+    expect(result.markdown).toContain("function hello()");
     expect(result.markdown).toContain("```");
   });
 

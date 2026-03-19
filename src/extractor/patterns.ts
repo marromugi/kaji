@@ -18,8 +18,18 @@ export const MAYBE_CANDIDATES = /and|article|body|column|content|main|shadow/i;
 
 /** Tags to strip from extracted content */
 export const STRIP_TAGS = new Set([
-  "script", "style", "noscript", "iframe", "form", "button",
-  "input", "select", "textarea", "nav", "footer", "header",
+  "script",
+  "style",
+  "noscript",
+  "iframe",
+  "form",
+  "button",
+  "input",
+  "select",
+  "textarea",
+  "nav",
+  "footer",
+  "header",
 ]);
 
 /** Block-level elements that might contain article content as direct children */
@@ -27,5 +37,13 @@ export const CONTENT_TAGS = new Set(["p", "pre", "td"]);
 
 /** Tags that indicate a div should be treated as a paragraph (if it has no block children) */
 export const DIV_TO_P_BLOCK_TAGS = new Set([
-  "blockquote", "dl", "div", "img", "ol", "p", "pre", "table", "ul",
+  "blockquote",
+  "dl",
+  "div",
+  "img",
+  "ol",
+  "p",
+  "pre",
+  "table",
+  "ul",
 ]);

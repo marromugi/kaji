@@ -1,4 +1,4 @@
-import { KDocumentNode, KNodeType } from "../types.js";
+import { KDocumentNode, KNode, KNodeType } from "../types.js";
 import { getTextContent, getElementsByTagName, querySelector } from "../parser/nodes.js";
 import { BYLINE_PATTERN } from "./patterns.js";
 
@@ -50,7 +50,7 @@ export function extractByline(doc: KDocumentNode): string | null {
   }
 
   // Search for elements with byline patterns in class/id/rel
-  const walk = (parent: { children: any[] }): string | null => {
+  const walk = (parent: { children: KNode[] }): string | null => {
     for (const child of parent.children) {
       if (child.type !== KNodeType.Element) continue;
       const cls = child.attributes.get("class") ?? "";

@@ -70,10 +70,7 @@ export function parseRobotsTxt(body: string): RobotsTxtRules {
  * Find the most specific matching group for the given user-agent.
  * Exact substring match on the UA string takes priority over wildcard (*).
  */
-function findGroup(
-  rules: RobotsTxtRules,
-  userAgent: string,
-): RobotsTxtGroup | null {
+function findGroup(rules: RobotsTxtRules, userAgent: string): RobotsTxtGroup | null {
   const ua = userAgent.toLowerCase();
   let wildcardGroup: RobotsTxtGroup | null = null;
 
@@ -122,11 +119,7 @@ function pathMatches(pattern: string, path: string): boolean {
  * When multiple rules match, the most specific (longest path) wins.
  * If specificity is equal, Allow takes precedence.
  */
-export function isAllowed(
-  rules: RobotsTxtRules,
-  userAgent: string,
-  path: string,
-): boolean {
+export function isAllowed(rules: RobotsTxtRules, userAgent: string, path: string): boolean {
   const group = findGroup(rules, userAgent);
   if (!group) return true;
 
@@ -136,10 +129,7 @@ export function isAllowed(
   for (const rule of group.rules) {
     if (pathMatches(rule.path, path)) {
       const specificity = rule.path.replace(/[*$]/g, "").length;
-      if (
-        specificity > bestLen ||
-        (specificity === bestLen && rule.type === "allow")
-      ) {
+      if (specificity > bestLen || (specificity === bestLen && rule.type === "allow")) {
         bestMatch = rule;
         bestLen = specificity;
       }

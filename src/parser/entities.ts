@@ -107,7 +107,7 @@ function decodeNumericEntity(input: string, pos: number): DecodedEntity {
   // +1 for '#', +1 for 'x' if hex, +digits length, +1 for ';' if present
   const length = 1 + (isHex ? 1 : 0) + digits.length + (hasSemicolon ? 1 : 0);
 
-  if (codePoint === 0 || codePoint > 0x10FFFF) {
+  if (codePoint === 0 || codePoint > 0x10ffff) {
     return { char: "\uFFFD", length };
   }
 

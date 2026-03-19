@@ -27,9 +27,7 @@ export class MarkdownConverter {
 
   constructor(options?: Partial<ConverterOptions>) {
     this.options = { ...DEFAULT_OPTIONS, ...options };
-    this.rules = [
-      ...createBuiltinRules((node) => this.processChildren(node)),
-    ];
+    this.rules = [...createBuiltinRules((node) => this.processChildren(node))];
   }
 
   /** Add a custom rule (prepended, so it takes priority) */

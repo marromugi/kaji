@@ -2,7 +2,6 @@ import { describe, it, expect } from "vitest";
 import { Tokenizer } from "../../../src/parser/tokenizer.js";
 import { TreeBuilder } from "../../../src/parser/tree-builder.js";
 import { MarkdownConverter } from "../../../src/converter/converter.js";
-import { KNodeType } from "../../../src/types.js";
 import { getElementsByTagName } from "../../../src/parser/nodes.js";
 
 function htmlToMd(html: string): string {
@@ -41,9 +40,7 @@ describe("MarkdownConverter", () => {
     });
 
     it("should handle nested emphasis", () => {
-      expect(htmlToMd("<p><strong><em>bold italic</em></strong></p>")).toBe(
-        "***bold italic***\n",
-      );
+      expect(htmlToMd("<p><strong><em>bold italic</em></strong></p>")).toBe("***bold italic***\n");
     });
   });
 
@@ -55,45 +52,33 @@ describe("MarkdownConverter", () => {
     });
 
     it("should handle links with title", () => {
-      expect(
-        htmlToMd('<a href="url" title="My Title">text</a>'),
-      ).toBe('[text](url "My Title")\n');
+      expect(htmlToMd('<a href="url" title="My Title">text</a>')).toBe('[text](url "My Title")\n');
     });
   });
 
   describe("images", () => {
     it("should convert images", () => {
-      expect(htmlToMd('<img src="photo.jpg" alt="A photo">')).toBe(
-        "![A photo](photo.jpg)\n",
-      );
+      expect(htmlToMd('<img src="photo.jpg" alt="A photo">')).toBe("![A photo](photo.jpg)\n");
     });
 
     it("should handle lazy-loaded images", () => {
-      expect(htmlToMd('<img data-src="photo.jpg" alt="lazy">')).toBe(
-        "![lazy](photo.jpg)\n",
-      );
+      expect(htmlToMd('<img data-src="photo.jpg" alt="lazy">')).toBe("![lazy](photo.jpg)\n");
     });
   });
 
   describe("lists", () => {
     it("should convert unordered lists", () => {
-      expect(htmlToMd("<ul><li>a</li><li>b</li><li>c</li></ul>")).toBe(
-        "- a\n- b\n- c\n",
-      );
+      expect(htmlToMd("<ul><li>a</li><li>b</li><li>c</li></ul>")).toBe("- a\n- b\n- c\n");
     });
 
     it("should convert ordered lists", () => {
-      expect(htmlToMd("<ol><li>first</li><li>second</li></ol>")).toBe(
-        "1. first\n2. second\n",
-      );
+      expect(htmlToMd("<ol><li>first</li><li>second</li></ol>")).toBe("1. first\n2. second\n");
     });
   });
 
   describe("code", () => {
     it("should convert inline code", () => {
-      expect(htmlToMd("<p>use <code>foo()</code> here</p>")).toBe(
-        "use `foo()` here\n",
-      );
+      expect(htmlToMd("<p>use <code>foo()</code> here</p>")).toBe("use `foo()` here\n");
     });
 
     it("should convert code blocks", () => {
@@ -104,17 +89,13 @@ describe("MarkdownConverter", () => {
 
   describe("blockquotes", () => {
     it("should convert blockquotes", () => {
-      expect(htmlToMd("<blockquote><p>quoted text</p></blockquote>")).toBe(
-        "> quoted text\n",
-      );
+      expect(htmlToMd("<blockquote><p>quoted text</p></blockquote>")).toBe("> quoted text\n");
     });
   });
 
   describe("horizontal rules", () => {
     it("should convert hr", () => {
-      expect(htmlToMd("<p>above</p><hr><p>below</p>")).toBe(
-        "above\n\n---\n\nbelow\n",
-      );
+      expect(htmlToMd("<p>above</p><hr><p>below</p>")).toBe("above\n\n---\n\nbelow\n");
     });
   });
 

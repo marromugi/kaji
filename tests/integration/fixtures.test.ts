@@ -31,7 +31,11 @@ describe("Fixtures", () => {
           .split("\n")
           .filter((l) => l.trim().length > 20)
           .slice(0, 5);
-        const strip = (s: string) => s.replace(/[\\*_`\[\]!#>~()\-]/g, "").replace(/\s+/g, " ").trim();
+        const strip = (s: string) =>
+          s
+            .replace(/[\\*_`[\]!#>~()-]/g, "")
+            .replace(/\s+/g, " ")
+            .trim();
         const strippedMd = strip(result.markdown);
         for (const line of expectedLines) {
           const phrase = strip(line);

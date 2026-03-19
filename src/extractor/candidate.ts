@@ -35,14 +35,9 @@ export function selectCandidate(
     const blockChildren = topCandidate.children.filter(
       (c) =>
         c.type === KNodeType.Element &&
-        (c.tagName === "div" ||
-          c.tagName === "article" ||
-          c.tagName === "section"),
+        (c.tagName === "div" || c.tagName === "article" || c.tagName === "section"),
     );
-    if (
-      blockChildren.length === 1 &&
-      blockChildren[0].type === KNodeType.Element
-    ) {
+    if (blockChildren.length === 1 && blockChildren[0].type === KNodeType.Element) {
       topCandidate = blockChildren[0] as KElementNode;
     }
   }
@@ -56,28 +51,20 @@ export function selectCandidate(
  * - It has a score >= threshold (max(10, topScore * 0.2))
  * - It is a <p> with low link density and substantial text
  */
-export function mergeSiblings(
-  topCandidate: KElementNode,
-  topScore: number,
-): KElementNode {
+export function mergeSiblings(topCandidate: KElementNode, topScore: number): KElementNode {
   const parent = topCandidate.parent;
   if (!parent || parent.type !== KNodeType.Element) return topCandidate;
 
   const threshold = Math.max(10, topScore * 0.2);
 
   // Check if siblings qualify for merging
-  const siblings = parent.children.filter(
-    (c) => c.type === KNodeType.Element,
-  ) as KElementNode[];
+  const siblings = parent.children.filter((c) => c.type === KNodeType.Element) as KElementNode[];
 
   const qualifying = siblings.filter((sibling) => {
     if (sibling === topCandidate) return true;
 
     // Check score
-    if (
-      sibling._contentScore !== undefined &&
-      sibling._contentScore >= threshold
-    ) {
+    if (sibling._contentScore !== undefined && sibling._contentScore >= threshold) {
       return true;
     }
 

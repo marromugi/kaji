@@ -8,37 +8,103 @@ import {
 } from "../types.js";
 
 export const VOID_ELEMENTS = new Set([
-  "area", "base", "br", "col", "embed", "hr", "img", "input",
-  "link", "meta", "param", "source", "track", "wbr",
+  "area",
+  "base",
+  "br",
+  "col",
+  "embed",
+  "hr",
+  "img",
+  "input",
+  "link",
+  "meta",
+  "param",
+  "source",
+  "track",
+  "wbr",
 ]);
 
 export const RAW_TEXT_ELEMENTS = new Set(["script", "style", "xmp"]);
 export const RCDATA_ELEMENTS = new Set(["title", "textarea"]);
 
 export const BLOCK_ELEMENTS = new Set([
-  "address", "article", "aside", "blockquote", "dd", "details",
-  "dialog", "div", "dl", "dt", "fieldset", "figcaption", "figure",
-  "footer", "form", "h1", "h2", "h3", "h4", "h5", "h6", "header",
-  "hgroup", "hr", "li", "main", "nav", "ol", "p", "pre", "section",
-  "summary", "table", "ul",
+  "address",
+  "article",
+  "aside",
+  "blockquote",
+  "dd",
+  "details",
+  "dialog",
+  "div",
+  "dl",
+  "dt",
+  "fieldset",
+  "figcaption",
+  "figure",
+  "footer",
+  "form",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "header",
+  "hgroup",
+  "hr",
+  "li",
+  "main",
+  "nav",
+  "ol",
+  "p",
+  "pre",
+  "section",
+  "summary",
+  "table",
+  "ul",
 ]);
 
 /** Elements that auto-close an open <p> */
 export const P_CLOSING_ELEMENTS = new Set([
-  "address", "article", "aside", "blockquote", "details", "div", "dl",
-  "fieldset", "figcaption", "figure", "footer", "form", "h1", "h2",
-  "h3", "h4", "h5", "h6", "header", "hgroup", "hr", "li", "main",
-  "menu", "nav", "ol", "p", "pre", "section", "summary", "table", "ul",
+  "address",
+  "article",
+  "aside",
+  "blockquote",
+  "details",
+  "div",
+  "dl",
+  "fieldset",
+  "figcaption",
+  "figure",
+  "footer",
+  "form",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "header",
+  "hgroup",
+  "hr",
+  "li",
+  "main",
+  "menu",
+  "nav",
+  "ol",
+  "p",
+  "pre",
+  "section",
+  "summary",
+  "table",
+  "ul",
 ]);
 
 export function createDocument(): KDocumentNode {
   return { type: KNodeType.Document, parent: null, children: [] };
 }
 
-export function createElement(
-  tagName: string,
-  attributes: Map<string, string>,
-): KElementNode {
+export function createElement(tagName: string, attributes: Map<string, string>): KElementNode {
   return {
     type: KNodeType.Element,
     tagName,
@@ -117,10 +183,7 @@ export function removeNode(node: KNode): void {
 }
 
 /** Append a child node to a parent */
-export function appendChild(
-  parent: KElementNode | KDocumentNode,
-  child: KNode,
-): void {
+export function appendChild(parent: KElementNode | KDocumentNode, child: KNode): void {
   child.parent = parent;
   parent.children.push(child);
 }

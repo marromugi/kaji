@@ -112,11 +112,7 @@ export interface ExtractionResult {
 
 export interface ConversionRule {
   filter: string | string[] | ((node: KElementNode) => boolean);
-  replacement: (
-    content: string,
-    node: KElementNode,
-    options: ConverterOptions,
-  ) => string;
+  replacement: (content: string, node: KElementNode, options: ConverterOptions) => string;
 }
 
 export interface ConverterOptions {

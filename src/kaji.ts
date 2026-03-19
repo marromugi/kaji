@@ -52,10 +52,7 @@ export async function kaji(
  * Extract main content from an HTML string and return Markdown.
  * This is the synchronous core — no network IO.
  */
-export function kajiFromHtml(
-  html: string,
-  options?: KajiOptions,
-): KajiResult {
+export function kajiFromHtml(html: string, options?: KajiOptions): KajiResult {
   // 1. Parse
   const tokenizer = new Tokenizer(html);
   const tokens = tokenizer.tokenize();

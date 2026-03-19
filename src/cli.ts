@@ -49,7 +49,11 @@ function buildOptions(): KajiOptions {
   if (values["heading-style"] === "setext") {
     converter.headingStyle = "setext";
   }
-  if (values["bullet-marker"] === "*" || values["bullet-marker"] === "+" || values["bullet-marker"] === "-") {
+  if (
+    values["bullet-marker"] === "*" ||
+    values["bullet-marker"] === "+" ||
+    values["bullet-marker"] === "-"
+  ) {
     converter.bulletListMarker = values["bullet-marker"];
   }
   return { converter };

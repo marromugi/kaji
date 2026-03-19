@@ -1,15 +1,7 @@
-import {
-  ConversionRule,
-  KElementNode,
-  KNodeType,
-  ConverterOptions,
-} from "../types.js";
-import { getTextContent, getElementsByTagName } from "../parser/nodes.js";
+import { ConversionRule, KElementNode, KNodeType } from "../types.js";
+import { getTextContent } from "../parser/nodes.js";
 
-function matchesFilter(
-  filter: ConversionRule["filter"],
-  node: KElementNode,
-): boolean {
+function matchesFilter(filter: ConversionRule["filter"], node: KElementNode): boolean {
   if (typeof filter === "string") {
     return node.tagName === filter;
   }
@@ -74,7 +66,11 @@ function convertTable(node: KElementNode, processNode: (n: KElementNode) => stri
           }
         }
         if (cells.length > 0) rows.push(cells);
-      } else if (child.tagName === "thead" || child.tagName === "tbody" || child.tagName === "tfoot") {
+      } else if (
+        child.tagName === "thead" ||
+        child.tagName === "tbody" ||
+        child.tagName === "tfoot"
+      ) {
         collectRows(child);
       }
     }
@@ -154,11 +150,8 @@ export function createBuiltinRules(processNode: (n: KElementNode) => string): Co
       filter: "li",
       replacement: (content, node, options) => {
         const parent = node.parent;
-        const isOrdered =
-          parent?.type === KNodeType.Element && parent.tagName === "ol";
-        const prefix = isOrdered
-          ? `${getListItemIndex(node)}. `
-          : `${options.bulletListMarker} `;
+        const isOrdered = parent?.type === KNodeType.Element && parent.tagName === "ol";
+        const prefix = isOrdered ? `${getListItemIndex(node)}. ` : `${options.bulletListMarker} `;
         const indent = " ".repeat(prefix.length);
         const trimmed = content.trim();
         const lines = trimmed.split("\n");
@@ -177,13 +170,10 @@ export function createBuiltinRules(processNode: (n: KElementNode) => string): Co
       // Fenced code block: <pre> containing <code>
       filter: (node) =>
         node.tagName === "pre" &&
-        node.children.some(
-          (c) => c.type === KNodeType.Element && c.tagName === "code",
-        ),
+        node.children.some((c) => c.type === KNodeType.Element && c.tagName === "code"),
       replacement: (_content, node, options) => {
         const codeNode = node.children.find(
-          (c): c is KElementNode =>
-            c.type === KNodeType.Element && c.tagName === "code",
+          (c): c is KElementNode => c.type === KNodeType.Element && c.tagName === "code",
         );
         const lang = extractLanguage(codeNode);
         const code = getTextContent(codeNode ?? node);
@@ -230,9 +220,7 @@ export function createBuiltinRules(processNode: (n: KElementNode) => string): Co
     {
       filter: ["em", "i"],
       replacement: (content, _node, options) =>
-        content.trim()
-          ? `${options.emDelimiter}${content.trim()}${options.emDelimiter}`
-          : "",
+        content.trim() ? `${options.emDelimiter}${content.trim()}${options.emDelimiter}` : "",
     },
 
     {
@@ -267,15 +255,11 @@ export function createBuiltinRules(processNode: (n: KElementNode) => string): Co
       // Inline code: <code> NOT inside <pre>
       filter: (node) =>
         node.tagName === "code" &&
-        !(
-          node.parent?.type === KNodeType.Element &&
-          node.parent.tagName === "pre"
-        ),
+        !(node.parent?.type === KNodeType.Element && node.parent.tagName === "pre"),
       replacement: (content) => {
         const count = longestBacktickRun(content) + 1;
         const fence = "`".repeat(count);
-        const pad =
-          content.startsWith("`") || content.endsWith("`") ? " " : "";
+        const pad = content.startsWith("`") || content.endsWith("`") ? " " : "";
         return `${fence}${pad}${content}${pad}${fence}`;
       },
     },
@@ -287,8 +271,7 @@ export function createBuiltinRules(processNode: (n: KElementNode) => string): Co
 
     {
       filter: "figcaption",
-      replacement: (content) =>
-        content.trim() ? `\n*${content.trim()}*\n` : "",
+      replacement: (content) => (content.trim() ? `\n*${content.trim()}*\n` : ""),
     },
   ];
 }

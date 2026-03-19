@@ -1,11 +1,4 @@
-import {
-  Token,
-  TokenType,
-  KDocumentNode,
-  KElementNode,
-  KNode,
-  KNodeType,
-} from "../types.js";
+import { Token, TokenType, KDocumentNode, KElementNode, KNode, KNodeType } from "../types.js";
 import {
   createDocument,
   createElement,
@@ -59,7 +52,11 @@ export class TreeBuilder {
     }
   }
 
-  private processStartTag(token: { tagName: string; attributes: { name: string; value: string }[]; selfClosing: boolean }): void {
+  private processStartTag(token: {
+    tagName: string;
+    attributes: { name: string; value: string }[];
+    selfClosing: boolean;
+  }): void {
     const tagName = token.tagName;
 
     // Auto-close <p> when a block element opens

@@ -108,9 +108,7 @@ function removeHighLinkDensity(node: KElementNode): void {
 
 function hasImages(node: KElementNode): boolean {
   if (node.tagName === "img") return true;
-  return node.children.some(
-    (c) => c.type === KNodeType.Element && hasImages(c),
-  );
+  return node.children.some((c) => c.type === KNodeType.Element && hasImages(c));
 }
 
 /** Normalize lazy-loaded images: copy data-src to src */

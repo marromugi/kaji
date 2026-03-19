@@ -1,9 +1,13 @@
 import { describe, it, expect } from "vitest";
-import { getBaseScore, getClassWeight, getLinkDensity, scoreDocument } from "../../../src/extractor/scorer.js";
+import {
+  getBaseScore,
+  getClassWeight,
+  getLinkDensity,
+  scoreDocument,
+} from "../../../src/extractor/scorer.js";
 import { Tokenizer } from "../../../src/parser/tokenizer.js";
 import { TreeBuilder } from "../../../src/parser/tree-builder.js";
-import { createElement } from "../../../src/parser/nodes.js";
-import { getElementsByTagName, querySelector } from "../../../src/parser/nodes.js";
+import { createElement, querySelector } from "../../../src/parser/nodes.js";
 
 function parse(html: string) {
   const tokens = new Tokenizer(html).tokenize();
@@ -93,9 +97,7 @@ describe("scoreDocument", () => {
     const candidates = scoreDocument(body);
     expect(candidates.length).toBeGreaterThan(0);
 
-    const articleCandidate = candidates.find(
-      (c) => c.node.attributes.get("class") === "article",
-    );
+    const articleCandidate = candidates.find((c) => c.node.attributes.get("class") === "article");
     expect(articleCandidate).toBeDefined();
     expect(articleCandidate!.contentScore).toBeGreaterThan(0);
   });

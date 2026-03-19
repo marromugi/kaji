@@ -111,7 +111,7 @@ describe("TreeBuilder", () => {
       const doc = parse("<div><p>text</p></div>");
       const p = findElement(doc, "p");
       expect(p?.parent?.type).toBe(KNodeType.Element);
-      expect((p?.parent as any)?.tagName).toBe("div");
+      expect((p?.parent as unknown as { tagName: string })?.tagName).toBe("div");
     });
   });
 });

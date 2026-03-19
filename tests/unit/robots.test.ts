@@ -1,6 +1,5 @@
 import { describe, it, expect } from "vitest";
 import { parseRobotsTxt, isAllowed } from "../../src/robots.js";
-import type { RobotsTxtRules } from "../../src/robots.js";
 
 function allowed(body: string, ua: string, path: string): boolean {
   return isAllowed(parseRobotsTxt(body), ua, path);
@@ -8,9 +7,7 @@ function allowed(body: string, ua: string, path: string): boolean {
 
 describe("parseRobotsTxt", () => {
   it("should parse a simple robots.txt", () => {
-    const rules = parseRobotsTxt(
-      `User-agent: *\nDisallow: /private/\nAllow: /private/public/`,
-    );
+    const rules = parseRobotsTxt(`User-agent: *\nDisallow: /private/\nAllow: /private/public/`);
     expect(rules.groups).toHaveLength(1);
     expect(rules.groups[0].userAgents).toEqual(["*"]);
     expect(rules.groups[0].rules).toEqual([
@@ -29,9 +26,7 @@ describe("parseRobotsTxt", () => {
   });
 
   it("should group multiple user-agents before rules", () => {
-    const rules = parseRobotsTxt(
-      `User-agent: bot-a\nUser-agent: bot-b\nDisallow: /`,
-    );
+    const rules = parseRobotsTxt(`User-agent: bot-a\nUser-agent: bot-b\nDisallow: /`);
     expect(rules.groups).toHaveLength(1);
     expect(rules.groups[0].userAgents).toEqual(["bot-a", "bot-b"]);
     expect(rules.groups[0].rules).toEqual([{ type: "disallow", path: "/" }]);
@@ -42,18 +37,12 @@ describe("parseRobotsTxt", () => {
       `# This is a comment\nUser-agent: *\n\n# Another comment\nDisallow: /admin/`,
     );
     expect(rules.groups).toHaveLength(1);
-    expect(rules.groups[0].rules).toEqual([
-      { type: "disallow", path: "/admin/" },
-    ]);
+    expect(rules.groups[0].rules).toEqual([{ type: "disallow", path: "/admin/" }]);
   });
 
   it("should ignore inline comments", () => {
-    const rules = parseRobotsTxt(
-      `User-agent: * # all bots\nDisallow: /private/ # keep out`,
-    );
-    expect(rules.groups[0].rules).toEqual([
-      { type: "disallow", path: "/private/" },
-    ]);
+    const rules = parseRobotsTxt(`User-agent: * # all bots\nDisallow: /private/ # keep out`);
+    expect(rules.groups[0].rules).toEqual([{ type: "disallow", path: "/private/" }]);
   });
 
   it("should return empty groups for empty input", () => {
@@ -66,9 +55,7 @@ describe("parseRobotsTxt", () => {
       `User-agent: *\nSitemap: https://example.com/sitemap.xml\nCrawl-delay: 10\nDisallow: /api/`,
     );
     expect(rules.groups).toHaveLength(1);
-    expect(rules.groups[0].rules).toEqual([
-      { type: "disallow", path: "/api/" },
-    ]);
+    expect(rules.groups[0].rules).toEqual([{ type: "disallow", path: "/api/" }]);
   });
 
   it("should skip disallow with empty value", () => {
@@ -85,21 +72,17 @@ describe("isAllowed", () => {
     });
 
     it("should disallow a matching path", () => {
-      expect(
-        allowed("User-agent: *\nDisallow: /private/", "kaji/0.1", "/private/page"),
-      ).toBe(false);
+      expect(allowed("User-agent: *\nDisallow: /private/", "kaji/0.1", "/private/page")).toBe(
+        false,
+      );
     });
 
     it("should allow a non-matching path", () => {
-      expect(
-        allowed("User-agent: *\nDisallow: /private/", "kaji/0.1", "/public/page"),
-      ).toBe(true);
+      expect(allowed("User-agent: *\nDisallow: /private/", "kaji/0.1", "/public/page")).toBe(true);
     });
 
     it("should disallow root disallow", () => {
-      expect(
-        allowed("User-agent: *\nDisallow: /", "kaji/0.1", "/anything"),
-      ).toBe(false);
+      expect(allowed("User-agent: *\nDisallow: /", "kaji/0.1", "/anything")).toBe(false);
     });
   });
 

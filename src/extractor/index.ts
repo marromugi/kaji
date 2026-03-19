@@ -1,10 +1,4 @@
-import {
-  ExtractionResult,
-  KDocumentNode,
-  KElementNode,
-  KNodeType,
-  KajiOptions,
-} from "../types.js";
+import { ExtractionResult, KDocumentNode, KElementNode, KNodeType, KajiOptions } from "../types.js";
 import {
   getTextContent,
   getElementsByTagName,
@@ -28,10 +22,7 @@ import { extractTitle, extractByline, extractSiteName } from "./metadata.js";
  * Main extraction function: takes a parsed document tree,
  * returns the extracted content subtree with metadata.
  */
-export function extract(
-  doc: KDocumentNode,
-  options?: KajiOptions,
-): ExtractionResult {
+export function extract(doc: KDocumentNode, options?: KajiOptions): ExtractionResult {
   const charThreshold = options?.charThreshold ?? 500;
   const nTopCandidates = options?.nTopCandidates ?? 5;
   const keepImages = options?.keepImages ?? true;
@@ -42,16 +33,18 @@ export function extract(
   const siteName = extractSiteName(doc);
 
   // Find <body> (or use entire doc)
-  const body = querySelector(doc, "body") ?? (() => {
-    // Create a virtual body from doc's element children
-    const vBody = createElement("body", new Map());
-    for (const child of [...doc.children]) {
-      if (child.type === KNodeType.Element) {
-        appendChild(vBody, child);
+  const body =
+    querySelector(doc, "body") ??
+    (() => {
+      // Create a virtual body from doc's element children
+      const vBody = createElement("body", new Map());
+      for (const child of [...doc.children]) {
+        if (child.type === KNodeType.Element) {
+          appendChild(vBody, child);
+        }
       }
-    }
-    return vBody;
-  })();
+      return vBody;
+    })();
 
   // Phase 1: Remove script/style/etc.
   for (const tag of STRIP_TAGS) {
@@ -116,11 +109,7 @@ function removeUnlikelyCandidates(body: KElementNode): void {
       if (child.type !== KNodeType.Element) continue;
 
       // Never remove body, article, or content-related tags
-      if (
-        child.tagName === "body" ||
-        child.tagName === "article" ||
-        child.tagName === "main"
-      ) {
+      if (child.tagName === "body" || child.tagName === "article" || child.tagName === "main") {
         walk(child);
         continue;
       }
@@ -147,13 +136,12 @@ function convertDivsToPs(body: KElementNode): void {
 
   for (const div of divs) {
     const hasBlockChild = div.children.some(
-      (c) =>
-        c.type === KNodeType.Element && DIV_TO_P_BLOCK_TAGS.has(c.tagName),
+      (c) => c.type === KNodeType.Element && DIV_TO_P_BLOCK_TAGS.has(c.tagName),
     );
 
     if (!hasBlockChild) {
       // Convert this div to a p by changing the tagName
-      (div as any).tagName = "p";
+      (div as unknown as { tagName: string }).tagName = "p";
     }
   }
 }

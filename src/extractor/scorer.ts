@@ -108,10 +108,7 @@ export function scoreDocument(body: KElementNode): ScoredCandidate[] {
         while (current && current.type === KNodeType.Element) {
           initCandidate(current, candidates);
           const divisor = level === 0 ? 1 : level === 1 ? 2 : level * 3;
-          candidates.set(
-            current,
-            candidates.get(current)! + innerScore / divisor,
-          );
+          candidates.set(current, candidates.get(current)! + innerScore / divisor);
           current = current.parent;
           level++;
           if (level > 5) break;
