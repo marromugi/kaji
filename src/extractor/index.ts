@@ -17,6 +17,7 @@ import { scoreDocument } from "./scorer.js";
 import { selectCandidate, mergeSiblings } from "./candidate.js";
 import { cleanContent } from "./cleaner.js";
 import { extractTitle, extractByline, extractSiteName } from "./metadata.js";
+import { querySelectorAll, querySelectorOne } from "../selector.js";
 
 /**
  * Main extraction function: takes a parsed document tree,
@@ -46,6 +47,17 @@ export function extract(doc: KDocumentNode, options?: KajiOptions): ExtractionRe
       return vBody;
     })();
 
+  // Custom: Force-remove elements matching `remove` selectors
+  if (options?.remove?.length) {
+    for (const selector of options.remove) {
+      const matches = querySelectorAll(body, selector);
+      for (const el of matches) removeNode(el);
+    }
+  }
+
+  // Custom: Build protected set from `include` selectors
+  const protectedNodes = buildProtectedSet(body, options?.include);
+
   // Phase 1: Remove script/style/etc.
   for (const tag of STRIP_TAGS) {
     const elements = getElementsByTagName(body, tag);
@@ -53,10 +65,20 @@ export function extract(doc: KDocumentNode, options?: KajiOptions): ExtractionRe
   }
 
   // Phase 2: Remove unlikely candidates
-  removeUnlikelyCandidates(body);
+  removeUnlikelyCandidates(body, protectedNodes);
 
   // Phase 3: Convert divs with no block children to p
   convertDivsToPs(body);
+
+  // Custom: If `select` is specified, use that element directly
+  if (options?.select) {
+    const selected = querySelectorOne(body, options.select);
+    if (selected) {
+      cleanContent(selected, keepImages, protectedNodes);
+      return buildResult(selected, title, byline, siteName);
+    }
+    // Selector didn't match — fall through to heuristic extraction
+  }
 
   // Phase 4: Score and select
   const candidates = scoreDocument(body);
@@ -72,13 +94,13 @@ export function extract(doc: KDocumentNode, options?: KajiOptions): ExtractionRe
   const article = mergeSiblings(topCandidate, topScore);
 
   // Phase 6: Clean the result
-  cleanContent(article, keepImages);
+  cleanContent(article, keepImages, protectedNodes);
 
   // Check character threshold — if too short, retry with body
   const text = getTextContent(article);
   if (text.trim().length < charThreshold && article !== body) {
     // Fallback to body
-    cleanContent(body, keepImages);
+    cleanContent(body, keepImages, protectedNodes);
     const bodyText = getTextContent(body);
     if (bodyText.trim().length > text.trim().length) {
       return buildResult(body, title, byline, siteName);
@@ -100,8 +122,11 @@ function buildResult(
   return { title, content, excerpt, byline, siteName };
 }
 
-/** Remove elements matching UNLIKELY_CANDIDATES (unless they also match MAYBE_CANDIDATES) */
-function removeUnlikelyCandidates(body: KElementNode): void {
+/** Remove elements matching UNLIKELY_CANDIDATES (unless they also match MAYBE_CANDIDATES or are protected) */
+function removeUnlikelyCandidates(
+  body: KElementNode,
+  protectedNodes?: Set<KElementNode>,
+): void {
   const toRemove: KElementNode[] = [];
 
   const walk = (el: KElementNode) => {
@@ -110,6 +135,12 @@ function removeUnlikelyCandidates(body: KElementNode): void {
 
       // Never remove body, article, or content-related tags
       if (child.tagName === "body" || child.tagName === "article" || child.tagName === "main") {
+        walk(child);
+        continue;
+      }
+
+      // Never remove protected elements
+      if (protectedNodes?.has(child)) {
         walk(child);
         continue;
       }
@@ -128,6 +159,35 @@ function removeUnlikelyCandidates(body: KElementNode): void {
 
   walk(body);
   for (const el of toRemove) removeNode(el);
+}
+
+/**
+ * Build a set of protected elements from `include` selectors.
+ * Also includes all ancestors of matched elements (protecting a child
+ * requires its parents to survive filtering too).
+ */
+function buildProtectedSet(
+  body: KElementNode,
+  includeSelectors?: string[],
+): Set<KElementNode> | undefined {
+  if (!includeSelectors?.length) return undefined;
+
+  const protectedSet = new Set<KElementNode>();
+
+  for (const selector of includeSelectors) {
+    const matches = querySelectorAll(body, selector);
+    for (const el of matches) {
+      // Protect the element itself and its ancestors
+      let current: KElementNode | KDocumentNode | null = el;
+      while (current && current.type === KNodeType.Element) {
+        if (protectedSet.has(current)) break; // already protected up the chain
+        protectedSet.add(current);
+        current = current.parent;
+      }
+    }
+  }
+
+  return protectedSet.size > 0 ? protectedSet : undefined;
 }
 
 /** Convert divs with no block children into p elements */

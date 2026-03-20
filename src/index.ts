@@ -8,6 +8,7 @@ export type {
   ConverterOptions,
   ExtractionResult,
   ConversionRule,
+  SiteRule,
   KNode,
   KElementNode,
   KTextNode,
@@ -22,6 +23,10 @@ export { Tokenizer } from "./parser/tokenizer.js";
 export { TreeBuilder } from "./parser/tree-builder.js";
 export { extract } from "./extractor/index.js";
 export { MarkdownConverter } from "./converter/converter.js";
+
+// Selector utilities (for advanced users)
+export { querySelectorAll, querySelectorOne, parseSelector, matchesSelector } from "./selector.js";
+export type { ParsedSelector } from "./selector.js";
 
 // robots.txt utilities
 export { parseRobotsTxt, isAllowed, checkRobotsTxt } from "./robots.js";

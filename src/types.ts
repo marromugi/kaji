@@ -128,6 +128,18 @@ export interface ConverterOptions {
 
 // ─── Public API Types ───
 
+/** Rule for site-specific content filtering. */
+export interface SiteRule {
+  /** URL matching: string = domain substring match, RegExp = full URL match. */
+  url: string | RegExp;
+  /** CSS-like selectors for elements to force-remove before extraction. */
+  remove?: string[];
+  /** CSS-like selectors for elements to protect from heuristic removal. */
+  include?: string[];
+  /** CSS-like selector for the main content container (bypasses heuristic scoring). */
+  select?: string;
+}
+
 export interface KajiOptions {
   charThreshold?: number;
   nTopCandidates?: number;
@@ -135,6 +147,14 @@ export interface KajiOptions {
   keepImages?: boolean;
   /** Check robots.txt before fetching (only applies to `kaji()`, not `kajiFromHtml()`). */
   respectRobotsTxt?: boolean;
+  /** CSS-like selectors for elements to force-remove before extraction. */
+  remove?: string[];
+  /** CSS-like selectors for elements to protect from heuristic removal. */
+  include?: string[];
+  /** CSS-like selector for the main content container (bypasses heuristic scoring). */
+  select?: string;
+  /** URL-pattern-matched rules (only effective with `kaji()`, ignored by `kajiFromHtml()`). */
+  siteRules?: SiteRule[];
 }
 
 export interface KajiResult {

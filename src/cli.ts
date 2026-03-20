@@ -14,6 +14,9 @@ const { values, positionals } = parseArgs({
     stdin: { type: "boolean" },
     "respect-robots-txt": { type: "boolean" },
     force: { type: "boolean", short: "f" },
+    remove: { type: "string", multiple: true },
+    include: { type: "string", multiple: true },
+    select: { type: "string" },
   },
 });
 
@@ -34,6 +37,9 @@ Options:
   --bullet-marker         Bullet marker: - (default), *, or +
   --respect-robots-txt    Check robots.txt before fetching (error if blocked)
   -f, --force             With --respect-robots-txt, warn instead of error
+  --remove SELECTOR       Remove elements matching CSS selector (repeatable)
+  --include SELECTOR      Protect elements from heuristic removal (repeatable)
+  --select SELECTOR       Use specific element as content container
 
 Examples:
   kaji https://example.com/article
@@ -41,6 +47,8 @@ Examples:
   kaji https://example.com -o article.md
   kaji https://example.com --respect-robots-txt
   kaji https://example.com --respect-robots-txt --force
+  kaji https://zenn.dev/article --remove ".topic-badge" --remove ".author-card"
+  kaji https://example.com --select "article.main-content"
   cat page.html | kaji --stdin`);
 }
 
@@ -56,7 +64,11 @@ function buildOptions(): KajiOptions {
   ) {
     converter.bulletListMarker = values["bullet-marker"];
   }
-  return { converter };
+  const opts: KajiOptions = { converter };
+  if (values.remove?.length) opts.remove = values.remove;
+  if (values.include?.length) opts.include = values.include;
+  if (values.select) opts.select = values.select;
+  return opts;
 }
 
 async function readStdin(): Promise<string> {

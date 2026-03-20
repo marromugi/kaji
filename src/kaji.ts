@@ -41,11 +41,46 @@ export async function kaji(
     throw new Error(`Failed to fetch ${url}: ${response.status}`);
   }
   const html = await response.text();
-  const result = kajiFromHtml(html, options);
+  const resolved = resolveSiteRules(url, options);
+  const result = kajiFromHtml(html, resolved);
   if (robotsTxtBlocked) {
     result.robotsTxtBlocked = true;
   }
   return result;
+}
+
+/**
+ * Resolve `siteRules` by matching the URL and merging into a flat options object.
+ * - `remove` / `include` arrays are concatenated from all matching rules.
+ * - `select` uses the first match (direct option takes precedence).
+ */
+function resolveSiteRules(
+  url: string,
+  options?: KajiOptions & { force?: boolean },
+): KajiOptions & { force?: boolean } {
+  if (!options?.siteRules?.length) return options ?? {};
+
+  const mergedRemove = [...(options.remove ?? [])];
+  const mergedInclude = [...(options.include ?? [])];
+  let mergedSelect = options.select;
+
+  for (const rule of options.siteRules) {
+    const matches =
+      typeof rule.url === "string" ? url.includes(rule.url) : rule.url.test(url);
+
+    if (matches) {
+      if (rule.remove) mergedRemove.push(...rule.remove);
+      if (rule.include) mergedInclude.push(...rule.include);
+      if (rule.select && !mergedSelect) mergedSelect = rule.select;
+    }
+  }
+
+  return {
+    ...options,
+    remove: mergedRemove.length ? mergedRemove : undefined,
+    include: mergedInclude.length ? mergedInclude : undefined,
+    select: mergedSelect,
+  };
 }
 
 /**

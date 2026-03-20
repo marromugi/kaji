@@ -6,19 +6,26 @@ import { getLinkDensity } from "./scorer.js";
 /**
  * Clean the extracted content tree by removing non-content elements.
  * Operates in-place on the tree.
+ *
+ * Elements in `protectedNodes` are shielded from heuristic removal
+ * (negative-weight and high-link-density phases).
  */
-export function cleanContent(node: KElementNode, keepImages: boolean): void {
+export function cleanContent(
+  node: KElementNode,
+  keepImages: boolean,
+  protectedNodes?: Set<KElementNode>,
+): void {
   // Phase 1: Remove STRIP_TAGS
   removeByTags(node);
 
   // Phase 2: Remove elements with negative weight and low content
-  removeNegativeWeight(node);
+  removeNegativeWeight(node, protectedNodes);
 
   // Phase 3: Remove empty elements
   removeEmpty(node, keepImages);
 
   // Phase 4: Remove high link-density elements
-  removeHighLinkDensity(node);
+  removeHighLinkDensity(node, protectedNodes);
 
   // Phase 5: Normalize lazy-loaded images
   normalizeLazyImages(node);
@@ -38,10 +45,18 @@ function removeByTags(node: KElementNode): void {
   for (const el of toRemove) removeNode(el);
 }
 
-function removeNegativeWeight(node: KElementNode): void {
+function removeNegativeWeight(
+  node: KElementNode,
+  protectedNodes?: Set<KElementNode>,
+): void {
   const toRemove: KNode[] = [];
   for (const child of node.children) {
     if (child.type !== KNodeType.Element) continue;
+
+    if (protectedNodes?.has(child)) {
+      removeNegativeWeight(child, protectedNodes);
+      continue;
+    }
 
     const cls = child.attributes.get("class") ?? "";
     const id = child.attributes.get("id") ?? "";
@@ -54,7 +69,7 @@ function removeNegativeWeight(node: KElementNode): void {
         continue;
       }
     }
-    removeNegativeWeight(child);
+    removeNegativeWeight(child, protectedNodes);
   }
   for (const el of toRemove) removeNode(el);
 }
@@ -78,10 +93,18 @@ function removeEmpty(node: KElementNode, keepImages: boolean): void {
   for (const el of toRemove) removeNode(el);
 }
 
-function removeHighLinkDensity(node: KElementNode): void {
+function removeHighLinkDensity(
+  node: KElementNode,
+  protectedNodes?: Set<KElementNode>,
+): void {
   const toRemove: KNode[] = [];
   for (const child of node.children) {
     if (child.type !== KNodeType.Element) continue;
+
+    if (protectedNodes?.has(child)) {
+      removeHighLinkDensity(child, protectedNodes);
+      continue;
+    }
 
     // Don't remove certain important tags
     if (
@@ -90,7 +113,7 @@ function removeHighLinkDensity(node: KElementNode): void {
       child.tagName === "code" ||
       child.tagName === "blockquote"
     ) {
-      removeHighLinkDensity(child);
+      removeHighLinkDensity(child, protectedNodes);
       continue;
     }
 
@@ -101,7 +124,7 @@ function removeHighLinkDensity(node: KElementNode): void {
       continue;
     }
 
-    removeHighLinkDensity(child);
+    removeHighLinkDensity(child, protectedNodes);
   }
   for (const el of toRemove) removeNode(el);
 }
