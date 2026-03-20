@@ -1,6 +1,6 @@
 import { parseArgs } from "node:util";
 import { readFileSync, writeFileSync } from "node:fs";
-import { kaji, kajiFromHtml } from "./kaji.js";
+import { toMarkdown, htmlToMarkdown } from "./kaji.js";
 import { loadConfig, mergeConfig } from "./config.js";
 import type { KajiOptions, ConverterOptions } from "./types.js";
 
@@ -100,7 +100,7 @@ async function main() {
 
   if (values.stdin) {
     const html = await readStdin();
-    const result = kajiFromHtml(html, buildOptions());
+    const result = htmlToMarkdown(html, buildOptions());
     markdown = result.markdown;
   } else if (positionals[0]) {
     const input = positionals[0];
@@ -110,11 +110,11 @@ async function main() {
         respectRobotsTxt: !!values["respect-robots-txt"],
         force: !!values.force,
       };
-      const result = await kaji(input, opts);
+      const result = await toMarkdown(input, opts);
       markdown = result.markdown;
     } else {
       const html = readFileSync(input, "utf-8");
-      const result = kajiFromHtml(html, buildOptions());
+      const result = htmlToMarkdown(html, buildOptions());
       markdown = result.markdown;
     }
   } else {

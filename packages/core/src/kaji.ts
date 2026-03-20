@@ -18,7 +18,7 @@ import { loadConfig, mergeConfig } from "./config.js";
  * When a `kaji.config.json` exists in the current directory (or `options.config`
  * points to a config file), it is loaded and merged with the provided options.
  */
-export async function kaji(
+export async function toMarkdown(
   url: string,
   options?: KajiOptions & { force?: boolean },
 ): Promise<KajiResult> {
@@ -52,7 +52,7 @@ export async function kaji(
   }
   const html = await response.text();
   const resolved = resolveSiteRules(url, opts);
-  const result = kajiFromHtml(html, resolved);
+  const result = htmlToMarkdown(html, resolved);
   if (robotsTxtBlocked) {
     result.robotsTxtBlocked = true;
   }
@@ -97,7 +97,7 @@ function resolveSiteRules(
  * Extract main content from an HTML string and return Markdown.
  * This is the synchronous core — no network IO.
  */
-export function kajiFromHtml(html: string, options?: KajiOptions): KajiResult {
+export function htmlToMarkdown(html: string, options?: KajiOptions): KajiResult {
   // 1. Parse
   const tokenizer = new Tokenizer(html);
   const tokens = tokenizer.tokenize();

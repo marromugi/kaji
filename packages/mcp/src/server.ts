@@ -3,7 +3,7 @@ import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { z } from "zod";
 import {
-  kaji,
+  toMarkdown,
   loadConfig,
   mergeConfig,
   Tokenizer,
@@ -143,7 +143,7 @@ export function createServer(): McpServer {
       codeBlockStyle,
       linkStyle,
     }) => {
-      const result = await kaji(url, {
+      const result = await toMarkdown(url, {
         config: configPath,
         respectRobotsTxt,
         force,

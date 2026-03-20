@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { readdirSync, readFileSync, existsSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { kajiFromHtml } from "../../src/kaji.js";
+import { htmlToMarkdown } from "../../src/kaji.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const FIXTURES_DIR = join(__dirname, "../fixtures");
@@ -17,7 +17,7 @@ describe("Fixtures", () => {
     it(`should extract and convert: ${fixture}`, () => {
       const dir = join(FIXTURES_DIR, fixture);
       const sourceHtml = readFileSync(join(dir, "source.html"), "utf-8");
-      const result = kajiFromHtml(sourceHtml);
+      const result = htmlToMarkdown(sourceHtml);
 
       // Basic sanity: should produce non-empty markdown
       expect(result.markdown.trim().length).toBeGreaterThan(0);

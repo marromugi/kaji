@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { extract } from "../../../src/extractor/index.js";
-import { kajiFromHtml } from "../../../src/kaji.js";
+import { htmlToMarkdown } from "../../../src/kaji.js";
 import { Tokenizer } from "../../../src/parser/tokenizer.js";
 import { TreeBuilder } from "../../../src/parser/tree-builder.js";
 import { getTextContent } from "../../../src/parser/nodes.js";
@@ -152,7 +152,7 @@ describe("custom select", () => {
   });
 });
 
-describe("kajiFromHtml with custom filters", () => {
+describe("htmlToMarkdown with custom filters", () => {
   it("should pass remove/include/select through to extraction", () => {
     const html = makeArticlePage(`
       <div class="noise">Noise</div>
@@ -160,7 +160,7 @@ describe("kajiFromHtml with custom filters", () => {
         <p>${"Article body. ".repeat(50)}</p>
       </article>
     `);
-    const result = kajiFromHtml(html, {
+    const result = htmlToMarkdown(html, {
       remove: [".noise"],
       select: "article.content",
     });

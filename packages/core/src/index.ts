@@ -1,5 +1,5 @@
 // Main API
-export { kaji, kajiFromHtml } from "./kaji.js";
+export { toMarkdown, htmlToMarkdown } from "./kaji.js";
 
 // Config
 export { loadConfig, mergeConfig } from "./config.js";
