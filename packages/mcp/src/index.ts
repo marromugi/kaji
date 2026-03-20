@@ -1,1 +1,6 @@
-// TODO: Implement MCP server with kaji_convert, kaji_select, kaji_select_markdown tools
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { createServer } from "./server.js";
+
+const server = createServer();
+const transport = new StdioServerTransport();
+await server.connect(transport);
