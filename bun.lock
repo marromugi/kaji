@@ -9,10 +9,33 @@
         "eslint": "^10.0.3",
         "eslint-config-prettier": "^10.1.8",
         "prettier": "^3.8.1",
+        "typescript-eslint": "^8.57.1",
+      },
+    },
+    "packages/core": {
+      "name": "@kaji/core",
+      "version": "0.1.0",
+      "bin": {
+        "kaji": "./dist/cli.js",
+      },
+      "devDependencies": {
         "tsup": "^8.5.1",
         "typescript": "^5.9.3",
-        "typescript-eslint": "^8.57.1",
         "vitest": "^4",
+      },
+    },
+    "packages/mcp": {
+      "name": "@kaji/mcp",
+      "version": "0.1.0",
+      "bin": {
+        "kaji-mcp": "./dist/index.js",
+      },
+      "dependencies": {
+        "@kaji/core": "workspace:*",
+      },
+      "devDependencies": {
+        "tsup": "^8.5.1",
+        "typescript": "^5.9.3",
       },
     },
   },
@@ -106,6 +129,10 @@
     "@jridgewell/sourcemap-codec": ["@jridgewell/sourcemap-codec@1.5.5", "", {}, "sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og=="],
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
+
+    "@kaji/core": ["@kaji/core@workspace:packages/core"],
+
+    "@kaji/mcp": ["@kaji/mcp@workspace:packages/mcp"],
 
     "@napi-rs/wasm-runtime": ["@napi-rs/wasm-runtime@1.1.1", "", { "dependencies": { "@emnapi/core": "^1.7.1", "@emnapi/runtime": "^1.7.1", "@tybys/wasm-util": "^0.10.1" } }, "sha512-p64ah1M1ld8xjWv3qbvFwHiFVWrq1yFvV4f7w+mzaqiR4IlSgkqhcRdHwsGgomwzBH51sRY4NEowLxnaBjcW/A=="],
 
