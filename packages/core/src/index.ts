@@ -1,14 +1,19 @@
 // Main API
 export { kaji, kajiFromHtml } from "./kaji.js";
 
+// Config
+export { loadConfig, mergeConfig } from "./config.js";
+
 // Types
 export type {
   KajiOptions,
   KajiResult,
+  KajiConfig,
   ConverterOptions,
   ExtractionResult,
   ConversionRule,
   SiteRule,
+  SiteRuleConfig,
   KNode,
   KElementNode,
   KTextNode,

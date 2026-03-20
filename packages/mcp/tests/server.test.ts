@@ -40,13 +40,14 @@ describe("kaji-mcp server", () => {
   });
 
   describe("listTools", () => {
-    it("should list all 3 tools", async () => {
+    it("should list all 4 tools", async () => {
       const { tools } = await client.listTools();
       const names = tools.map((t) => t.name);
       expect(names).toContain("kaji_convert");
       expect(names).toContain("kaji_select");
       expect(names).toContain("kaji_select_markdown");
-      expect(tools).toHaveLength(3);
+      expect(names).toContain("kaji_config");
+      expect(tools).toHaveLength(4);
     });
 
     it("kaji_convert should have url as required parameter", async () => {

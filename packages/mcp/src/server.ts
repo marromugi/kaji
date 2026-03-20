@@ -1,7 +1,11 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { writeFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { z } from "zod";
 import {
   kaji,
+  loadConfig,
+  mergeConfig,
   Tokenizer,
   TreeBuilder,
   querySelectorAll,
@@ -10,6 +14,7 @@ import {
   type KNode,
   type KElementNode,
   type KDocumentNode,
+  type KajiConfig,
 } from "@kaji/core";
 
 const VOID_ELEMENTS = new Set([
@@ -85,6 +90,7 @@ export function createServer(): McpServer {
       description: "Fetch a web page and convert its main content to Markdown",
       inputSchema: {
         url: z.string().describe("URL of the page to fetch"),
+        config: z.string().optional().describe("Path to kaji.config.json (default: ./kaji.config.json in CWD)"),
         respectRobotsTxt: z.boolean().optional().describe("Check robots.txt before fetching"),
         force: z.boolean().optional().describe("Override robots.txt block"),
         remove: z
@@ -124,6 +130,7 @@ export function createServer(): McpServer {
     },
     async ({
       url,
+      config: configPath,
       respectRobotsTxt,
       force,
       remove,
@@ -137,6 +144,7 @@ export function createServer(): McpServer {
       linkStyle,
     }) => {
       const result = await kaji(url, {
+        config: configPath,
         respectRobotsTxt,
         force,
         remove,
@@ -256,6 +264,139 @@ export function createServer(): McpServer {
           {
             type: "text" as const,
             text: `Found ${elements.length} element(s) matching "${selector}":\n\n${results.join("\n\n---\n\n")}`,
+          },
+        ],
+      };
+    },
+  );
+
+  // ── Tool 4: kaji_config ──
+
+  const siteRuleSchema = z.object({
+    url: z.string().describe("URL substring to match (e.g. \"zenn.dev\")"),
+    remove: z.array(z.string()).optional().describe("CSS selectors for elements to remove"),
+    include: z.array(z.string()).optional().describe("CSS selectors for elements to protect"),
+    select: z.string().optional().describe("CSS selector for the main content container"),
+  });
+
+  server.registerTool(
+    "kaji_config",
+    {
+      description:
+        "Read or write a kaji.config.json configuration file. " +
+        "When called without siteRules/options, reads the current config. " +
+        "When called with siteRules/options, writes them to the config file.",
+      inputSchema: {
+        path: z
+          .string()
+          .optional()
+          .describe("Path to config file (default: ./kaji.config.json in CWD)"),
+        siteRules: z
+          .array(siteRuleSchema)
+          .optional()
+          .describe("Domain-specific rules to write"),
+        charThreshold: z.number().optional().describe("Minimum character count for extraction"),
+        keepImages: z.boolean().optional().describe("Keep images in output"),
+        respectRobotsTxt: z.boolean().optional().describe("Check robots.txt before fetching"),
+        remove: z.array(z.string()).optional().describe("Global CSS selectors to remove"),
+        include: z.array(z.string()).optional().describe("Global CSS selectors to protect"),
+        select: z.string().optional().describe("Global CSS selector for main content"),
+        headingStyle: z.enum(["atx", "setext"]).optional().describe("Heading style"),
+        bulletListMarker: z.enum(["*", "-", "+"]).optional().describe("Bullet list marker"),
+        codeBlockStyle: z.enum(["fenced", "indented"]).optional().describe("Code block style"),
+        linkStyle: z.enum(["inlined", "referenced"]).optional().describe("Link style"),
+      },
+    },
+    async ({
+      path: configPath,
+      siteRules,
+      charThreshold,
+      keepImages,
+      respectRobotsTxt,
+      remove,
+      include,
+      select,
+      headingStyle,
+      bulletListMarker,
+      codeBlockStyle,
+      linkStyle,
+    }) => {
+      const hasWriteFields =
+        siteRules !== undefined ||
+        charThreshold !== undefined ||
+        keepImages !== undefined ||
+        respectRobotsTxt !== undefined ||
+        remove !== undefined ||
+        include !== undefined ||
+        select !== undefined ||
+        headingStyle !== undefined ||
+        bulletListMarker !== undefined ||
+        codeBlockStyle !== undefined ||
+        linkStyle !== undefined;
+
+      // ── Read mode ──
+      if (!hasWriteFields) {
+        const config = loadConfig(configPath);
+        if (!config) {
+          return {
+            content: [
+              {
+                type: "text" as const,
+                text: "No kaji.config.json found. You can create one by calling this tool with siteRules or other options.",
+              },
+            ],
+          };
+        }
+        return {
+          content: [
+            {
+              type: "text" as const,
+              text: JSON.stringify(config, null, 2),
+            },
+          ],
+        };
+      }
+
+      // ── Write mode ──
+      // Load existing config to merge with new values
+      let existing: KajiConfig = {};
+      try {
+        existing = loadConfig(configPath) ?? {};
+      } catch {
+        // No existing config, start fresh
+      }
+
+      const converter = {
+        ...existing.converter,
+        ...(headingStyle && { headingStyle }),
+        ...(bulletListMarker && { bulletListMarker }),
+        ...(codeBlockStyle && { codeBlockStyle }),
+        ...(linkStyle && { linkStyle }),
+      };
+
+      const newConfig: KajiConfig = {
+        ...existing,
+        ...(charThreshold !== undefined && { charThreshold }),
+        ...(keepImages !== undefined && { keepImages }),
+        ...(respectRobotsTxt !== undefined && { respectRobotsTxt }),
+        ...(remove !== undefined && { remove }),
+        ...(include !== undefined && { include }),
+        ...(select !== undefined && { select }),
+        ...(siteRules !== undefined && { siteRules }),
+        ...(Object.keys(converter).length > 0 && { converter }),
+      };
+
+      const filePath = configPath
+        ? resolve(configPath)
+        : resolve(process.cwd(), "kaji.config.json");
+      const json = JSON.stringify(newConfig, null, 2);
+      writeFileSync(filePath, json + "\n", "utf-8");
+
+      return {
+        content: [
+          {
+            type: "text" as const,
+            text: `Config written to ${filePath}:\n\n${json}`,
           },
         ],
       };

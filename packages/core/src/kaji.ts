@@ -4,6 +4,7 @@ import { extract } from "./extractor/index.js";
 import { MarkdownConverter } from "./converter/converter.js";
 import { KajiOptions, KajiResult } from "./types.js";
 import { checkRobotsTxt } from "./robots.js";
+import { loadConfig, mergeConfig } from "./config.js";
 
 /**
  * Fetch a URL, extract main content, and return Markdown.
@@ -13,17 +14,26 @@ import { checkRobotsTxt } from "./robots.js";
  *   - By default an error is thrown.
  *   - With `force: true`, a warning is logged and fetching proceeds
  *     (the result will have `robotsTxtBlocked: true`).
+ *
+ * When a `kaji.config.json` exists in the current directory (or `options.config`
+ * points to a config file), it is loaded and merged with the provided options.
  */
 export async function kaji(
   url: string,
   options?: KajiOptions & { force?: boolean },
 ): Promise<KajiResult> {
+  // Load and merge config file
+  const config = loadConfig(options?.config);
+  const opts: KajiOptions & { force?: boolean } = config
+    ? { ...mergeConfig(config, options), force: options?.force }
+    : (options ?? {});
+
   let robotsTxtBlocked = false;
 
-  if (options?.respectRobotsTxt) {
+  if (opts.respectRobotsTxt) {
     const allowed = await checkRobotsTxt(url);
     if (!allowed) {
-      if (options.force) {
+      if (opts.force) {
         console.warn(`kaji: robots.txt disallows access to ${url} (proceeding with --force)`);
         robotsTxtBlocked = true;
       } else {
@@ -41,7 +51,7 @@ export async function kaji(
     throw new Error(`Failed to fetch ${url}: ${response.status}`);
   }
   const html = await response.text();
-  const resolved = resolveSiteRules(url, options);
+  const resolved = resolveSiteRules(url, opts);
   const result = kajiFromHtml(html, resolved);
   if (robotsTxtBlocked) {
     result.robotsTxtBlocked = true;

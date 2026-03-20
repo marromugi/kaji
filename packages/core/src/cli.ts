@@ -1,6 +1,7 @@
 import { parseArgs } from "node:util";
 import { readFileSync, writeFileSync } from "node:fs";
 import { kaji, kajiFromHtml } from "./kaji.js";
+import { loadConfig, mergeConfig } from "./config.js";
 import type { KajiOptions, ConverterOptions } from "./types.js";
 
 const { values, positionals } = parseArgs({
@@ -9,6 +10,7 @@ const { values, positionals } = parseArgs({
     help: { type: "boolean", short: "h" },
     version: { type: "boolean", short: "v" },
     output: { type: "string", short: "o" },
+    config: { type: "string", short: "c" },
     "heading-style": { type: "string" },
     "bullet-marker": { type: "string" },
     stdin: { type: "boolean" },
@@ -32,6 +34,7 @@ Options:
   -h, --help              Show this help
   -v, --version           Show version
   -o, --output FILE       Write output to file
+  -c, --config FILE       Path to config file (default: ./kaji.config.json)
   --stdin                 Read HTML from stdin
   --heading-style         Heading style: atx (default) or setext
   --bullet-marker         Bullet marker: - (default), *, or +
@@ -64,11 +67,14 @@ function buildOptions(): KajiOptions {
   ) {
     converter.bulletListMarker = values["bullet-marker"];
   }
-  const opts: KajiOptions = { converter };
-  if (values.remove?.length) opts.remove = values.remove;
-  if (values.include?.length) opts.include = values.include;
-  if (values.select) opts.select = values.select;
-  return opts;
+  const cliOpts: KajiOptions = { converter };
+  if (values.remove?.length) cliOpts.remove = values.remove;
+  if (values.include?.length) cliOpts.include = values.include;
+  if (values.select) cliOpts.select = values.select;
+
+  // Load and merge config file
+  const config = loadConfig(values.config);
+  return config ? mergeConfig(config, cliOpts) : cliOpts;
 }
 
 async function readStdin(): Promise<string> {

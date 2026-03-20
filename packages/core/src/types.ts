@@ -140,6 +140,35 @@ export interface SiteRule {
   select?: string;
 }
 
+/** JSON-serializable site rule (RegExp not supported). */
+export interface SiteRuleConfig {
+  /** URL substring match. */
+  url: string;
+  /** CSS-like selectors for elements to force-remove before extraction. */
+  remove?: string[];
+  /** CSS-like selectors for elements to protect from heuristic removal. */
+  include?: string[];
+  /** CSS-like selector for the main content container (bypasses heuristic scoring). */
+  select?: string;
+}
+
+/** JSON-serializable configuration loaded from `kaji.config.json`. */
+export interface KajiConfig {
+  charThreshold?: number;
+  nTopCandidates?: number;
+  converter?: Partial<ConverterOptions>;
+  keepImages?: boolean;
+  respectRobotsTxt?: boolean;
+  /** CSS-like selectors for elements to force-remove before extraction. */
+  remove?: string[];
+  /** CSS-like selectors for elements to protect from heuristic removal. */
+  include?: string[];
+  /** CSS-like selector for the main content container (bypasses heuristic scoring). */
+  select?: string;
+  /** Domain-specific rules. */
+  siteRules?: SiteRuleConfig[];
+}
+
 export interface KajiOptions {
   charThreshold?: number;
   nTopCandidates?: number;
@@ -155,6 +184,8 @@ export interface KajiOptions {
   select?: string;
   /** URL-pattern-matched rules (only effective with `kaji()`, ignored by `kajiFromHtml()`). */
   siteRules?: SiteRule[];
+  /** Path to a config file. If omitted, `kaji.config.json` in CWD is used when found. */
+  config?: string;
 }
 
 export interface KajiResult {
