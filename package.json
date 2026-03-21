@@ -1,5 +1,5 @@
 {
-  "name": "kaji-monorepo",
+  "name": "yunagi-monorepo",
   "private": true,
   "workspaces": [
     "packages/*"

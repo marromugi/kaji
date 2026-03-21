@@ -37,12 +37,12 @@
   "author": "marromugi",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/marromugi/kaji.git",
+    "url": "git+https://github.com/marromugi/yunagi.git",
     "directory": "packages/yunagi"
   },
-  "homepage": "https://github.com/marromugi/kaji/tree/main/packages/yunagi",
+  "homepage": "https://github.com/marromugi/yunagi/tree/main/packages/yunagi",
   "bugs": {
-    "url": "https://github.com/marromugi/kaji/issues"
+    "url": "https://github.com/marromugi/yunagi/issues"
   },
   "devDependencies": {
     "@types/node": "^25.5.0",

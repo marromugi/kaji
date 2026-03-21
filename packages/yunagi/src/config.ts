@@ -1,17 +1,17 @@
 import { readFileSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
-import type { KajiConfig, KajiOptions } from "./types.js";
+import type { YunagiConfig, YunagiOptions } from "./types.js";
 
-const CONFIG_FILENAME = "kaji.config.json";
+const CONFIG_FILENAME = "yunagi.config.json";
 
 /**
- * Load a kaji config file.
+ * Load a yunagi config file.
  *
  * - If `configPath` is given, read that file (throws if missing).
- * - Otherwise, look for `kaji.config.json` in the current working directory.
+ * - Otherwise, look for `yunagi.config.json` in the current working directory.
  *   Returns `null` if the file does not exist.
  */
-export function loadConfig(configPath?: string): KajiConfig | null {
+export function loadConfig(configPath?: string): YunagiConfig | null {
   const filePath = configPath ? resolve(configPath) : resolve(process.cwd(), CONFIG_FILENAME);
 
   if (!configPath && !existsSync(filePath)) {
@@ -36,7 +36,7 @@ export function loadConfig(configPath?: string): KajiConfig | null {
     throw new Error(`Config file must contain a JSON object: ${filePath}`);
   }
 
-  return parsed as KajiConfig;
+  return parsed as YunagiConfig;
 }
 
 /**
@@ -48,8 +48,8 @@ export function loadConfig(configPath?: string): KajiConfig | null {
  * - `converter`: shallow-merged (options fields override config fields).
  * - All other fields: options override config.
  */
-export function mergeConfig(config: KajiConfig, options?: KajiOptions): KajiOptions {
-  const merged: KajiOptions = { ...config, ...options };
+export function mergeConfig(config: YunagiConfig, options?: YunagiOptions): YunagiOptions {
+  const merged: YunagiOptions = { ...config, ...options };
 
   // Merge converter options
   if (config.converter || options?.converter) {

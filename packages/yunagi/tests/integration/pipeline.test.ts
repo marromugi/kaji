@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { htmlToMarkdown } from "../../src/kaji.js";
+import { htmlToMarkdown } from "../../src/yunagi.js";
 
 describe("Pipeline", () => {
   it("should handle a minimal HTML document", () => {

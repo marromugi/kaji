@@ -1,10 +1,10 @@
-# @kaji/mcp
+# @yunagi/mcp
 
-MCP (Model Context Protocol) server that exposes [kaji](../core) as tools for LLM clients.
+MCP (Model Context Protocol) server that exposes [yunagi](../yunagi) as tools for LLM clients.
 
 ## Tools
 
-### `kaji_convert`
+### `yunagi_convert`
 
 Fetch a web page and convert its main content to Markdown.
 
@@ -23,7 +23,7 @@ Fetch a web page and convert its main content to Markdown.
 | `codeBlockStyle` | `"fenced"` \| `"indented"` | No | Code block style (default: fenced) |
 | `linkStyle` | `"inlined"` \| `"referenced"` | No | Link style (default: inlined) |
 
-### `kaji_select`
+### `yunagi_select`
 
 Fetch a web page and extract elements matching a CSS selector as HTML.
 
@@ -32,7 +32,7 @@ Fetch a web page and extract elements matching a CSS selector as HTML.
 | `url` | string | Yes | URL of the page to fetch |
 | `selector` | string | Yes | CSS selector to match elements |
 
-### `kaji_select_markdown`
+### `yunagi_select_markdown`
 
 Fetch a web page, extract elements matching a CSS selector, and convert them to Markdown.
 
@@ -54,9 +54,9 @@ Add to `claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
-    "kaji": {
-      "command": "node",
-      "args": ["/path/to/kaji/packages/mcp/dist/index.js"]
+    "yunagi": {
+      "command": "npx",
+      "args": ["@yunagi/mcp"]
     }
   }
 }
@@ -65,7 +65,7 @@ Add to `claude_desktop_config.json`:
 ### Claude Code
 
 ```bash
-claude mcp add kaji node /path/to/kaji/packages/mcp/dist/index.js
+claude mcp add yunagi npx @yunagi/mcp
 ```
 
 ## Build

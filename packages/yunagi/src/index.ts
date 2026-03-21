@@ -1,14 +1,14 @@
 // Main API
-export { toMarkdown, htmlToMarkdown } from "./kaji.js";
+export { toMarkdown, htmlToMarkdown } from "./yunagi.js";
 
 // Config
 export { loadConfig, mergeConfig } from "./config.js";
 
 // Types
 export type {
-  KajiOptions,
-  KajiResult,
-  KajiConfig,
+  YunagiOptions,
+  YunagiResult,
+  YunagiConfig,
   ConverterOptions,
   ExtractionResult,
   ConversionRule,

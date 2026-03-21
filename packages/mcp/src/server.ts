@@ -14,7 +14,7 @@ import {
   type KNode,
   type KElementNode,
   type KDocumentNode,
-  type KajiConfig,
+  type YunagiConfig,
 } from "yunagi";
 
 const VOID_ELEMENTS = new Set([
@@ -61,7 +61,7 @@ function serializeToHtml(node: KNode | KDocumentNode): string {
 
 async function fetchHtml(url: string): Promise<string> {
   const response = await fetch(url, {
-    headers: { "User-Agent": "kaji/0.1" },
+    headers: { "User-Agent": "yunagi/0.1" },
   });
   if (!response.ok) {
     throw new Error(`Failed to fetch ${url}: ${response.status}`);
@@ -78,19 +78,19 @@ function parseHtml(html: string): KDocumentNode {
 
 export function createServer(): McpServer {
   const server = new McpServer({
-    name: "kaji-mcp",
+    name: "yunagi-mcp",
     version: "0.1.0",
   });
 
-  // ── Tool 1: kaji_convert ──
+  // ── Tool 1: yunagi_convert ──
 
   server.registerTool(
-    "kaji_convert",
+    "yunagi_convert",
     {
       description: "Fetch a web page and convert its main content to Markdown",
       inputSchema: {
         url: z.string().describe("URL of the page to fetch"),
-        config: z.string().optional().describe("Path to kaji.config.json (default: ./kaji.config.json in CWD)"),
+        config: z.string().optional().describe("Path to yunagi.config.json (default: ./yunagi.config.json in CWD)"),
         respectRobotsTxt: z.boolean().optional().describe("Check robots.txt before fetching"),
         force: z.boolean().optional().describe("Override robots.txt block"),
         remove: z
@@ -174,10 +174,10 @@ export function createServer(): McpServer {
     },
   );
 
-  // ── Tool 2: kaji_select ──
+  // ── Tool 2: yunagi_select ──
 
   server.registerTool(
-    "kaji_select",
+    "yunagi_select",
     {
       description: "Fetch a web page and extract elements matching a CSS selector as HTML",
       inputSchema: {
@@ -210,10 +210,10 @@ export function createServer(): McpServer {
     },
   );
 
-  // ── Tool 3: kaji_select_markdown ──
+  // ── Tool 3: yunagi_select_markdown ──
 
   server.registerTool(
-    "kaji_select_markdown",
+    "yunagi_select_markdown",
     {
       description:
         "Fetch a web page, extract elements matching a CSS selector, and convert them to Markdown",
@@ -270,7 +270,7 @@ export function createServer(): McpServer {
     },
   );
 
-  // ── Tool 4: kaji_config ──
+  // ── Tool 4: yunagi_config ──
 
   const siteRuleSchema = z.object({
     url: z.string().describe("URL substring to match (e.g. \"zenn.dev\")"),
@@ -280,17 +280,17 @@ export function createServer(): McpServer {
   });
 
   server.registerTool(
-    "kaji_config",
+    "yunagi_config",
     {
       description:
-        "Read or write a kaji.config.json configuration file. " +
+        "Read or write a yunagi.config.json configuration file. " +
         "When called without siteRules/options, reads the current config. " +
         "When called with siteRules/options, writes them to the config file.",
       inputSchema: {
         path: z
           .string()
           .optional()
-          .describe("Path to config file (default: ./kaji.config.json in CWD)"),
+          .describe("Path to config file (default: ./yunagi.config.json in CWD)"),
         siteRules: z
           .array(siteRuleSchema)
           .optional()
@@ -342,7 +342,7 @@ export function createServer(): McpServer {
             content: [
               {
                 type: "text" as const,
-                text: "No kaji.config.json found. You can create one by calling this tool with siteRules or other options.",
+                text: "No yunagi.config.json found. You can create one by calling this tool with siteRules or other options.",
               },
             ],
           };
@@ -359,7 +359,7 @@ export function createServer(): McpServer {
 
       // ── Write mode ──
       // Load existing config to merge with new values
-      let existing: KajiConfig = {};
+      let existing: YunagiConfig = {};
       try {
         existing = loadConfig(configPath) ?? {};
       } catch {
@@ -374,7 +374,7 @@ export function createServer(): McpServer {
         ...(linkStyle && { linkStyle }),
       };
 
-      const newConfig: KajiConfig = {
+      const newConfig: YunagiConfig = {
         ...existing,
         ...(charThreshold !== undefined && { charThreshold }),
         ...(keepImages !== undefined && { keepImages }),
@@ -388,7 +388,7 @@ export function createServer(): McpServer {
 
       const filePath = configPath
         ? resolve(configPath)
-        : resolve(process.cwd(), "kaji.config.json");
+        : resolve(process.cwd(), "yunagi.config.json");
       const json = JSON.stringify(newConfig, null, 2);
       writeFileSync(filePath, json + "\n", "utf-8");
 

@@ -1,12 +1,12 @@
 {
   "name": "@yunagi/mcp",
   "version": "0.1.0",
-  "description": "MCP server for kaji HTML-to-Markdown converter",
+  "description": "MCP server for yunagi HTML-to-Markdown converter",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "kaji-mcp": "dist/index.js"
+    "yunagi-mcp": "dist/index.js"
   },
   "files": [
     "dist"
@@ -33,11 +33,11 @@
   "author": "marromugi",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/marromugi/kaji.git",
+    "url": "git+https://github.com/marromugi/yunagi.git",
     "directory": "packages/mcp"
   },
-  "homepage": "https://github.com/marromugi/kaji/tree/main/packages/mcp",
+  "homepage": "https://github.com/marromugi/yunagi/tree/main/packages/mcp",
   "bugs": {
-    "url": "https://github.com/marromugi/kaji/issues"
+    "url": "https://github.com/marromugi/yunagi/issues"
   }
 }

@@ -1,4 +1,4 @@
-import { ExtractionResult, KDocumentNode, KElementNode, KNodeType, KajiOptions } from "../types.js";
+import { ExtractionResult, KDocumentNode, KElementNode, KNodeType, YunagiOptions } from "../types.js";
 import {
   getTextContent,
   getElementsByTagName,
@@ -23,7 +23,7 @@ import { querySelectorAll, querySelectorOne } from "../selector.js";
  * Main extraction function: takes a parsed document tree,
  * returns the extracted content subtree with metadata.
  */
-export function extract(doc: KDocumentNode, options?: KajiOptions): ExtractionResult {
+export function extract(doc: KDocumentNode, options?: YunagiOptions): ExtractionResult {
   const charThreshold = options?.charThreshold ?? 500;
   const nTopCandidates = options?.nTopCandidates ?? 5;
   const keepImages = options?.keepImages ?? true;

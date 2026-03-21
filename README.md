@@ -1,6 +1,6 @@
-# Kaji (舵)
+# Yunagi (夕凪)
 
-> **舵 (kaji)** — Japanese for "rudder." Just as a rudder steers a ship through the sea, Kaji steers you to the essential content within a sea of HTML.
+> **夕凪 (yunagi)** — Japanese for "evening calm." The moment when the sea wind stills and the ocean surface becomes perfectly calm. Yunagi takes the turbulent sea of HTML and delivers serene, readable Markdown.
 
 A zero-dependency HTML-to-Markdown converter that extracts main content from web pages. Available as a library, CLI tool, and MCP server.
 
@@ -17,8 +17,8 @@ A zero-dependency HTML-to-Markdown converter that extracts main content from web
 
 | Package | Description |
 | --- | --- |
-| [@kaji/core](packages/core) | Core library and CLI |
-| [@kaji/mcp](packages/mcp) | MCP server |
+| [yunagi](packages/yunagi) | Core library and CLI |
+| [@yunagi/mcp](packages/mcp) | MCP server |
 
 ## Getting Started
 
@@ -31,28 +31,28 @@ bun run build
 
 ```bash
 # Basic usage
-kaji https://example.com/article
+yunagi https://example.com/article
 
 # Output to file
-kaji https://example.com -o article.md
+yunagi https://example.com -o article.md
 
 # With robots.txt compliance
-kaji https://example.com --respect-robots-txt
+yunagi https://example.com --respect-robots-txt
 
 # Custom filtering
-kaji https://example.com --remove ".sidebar" --remove ".ad"
+yunagi https://example.com --remove ".sidebar" --remove ".ad"
 
 # Select specific content
-kaji https://example.com --select "article.main"
+yunagi https://example.com --select "article.main"
 
 # From stdin
-cat page.html | kaji --stdin
+cat page.html | yunagi --stdin
 ```
 
 ## Programmatic API
 
 ```typescript
-import { toMarkdown, htmlToMarkdown } from '@kaji/core'
+import { toMarkdown, htmlToMarkdown } from 'yunagi'
 
 // Fetch and convert
 const result = await toMarkdown('https://example.com', {
@@ -67,7 +67,7 @@ const result = htmlToMarkdown(htmlString, options)
 
 ## Configuration
 
-Create a `kaji.config.json` in your project root:
+Create a `yunagi.config.json` in your project root:
 
 ```json
 {
@@ -96,18 +96,18 @@ Create a `kaji.config.json` in your project root:
 
 The MCP server exposes 3 tools:
 
-- **`kaji_convert`** - Fetch a URL, extract main content, and convert to Markdown
-- **`kaji_select`** - Extract elements matching a CSS selector as HTML
-- **`kaji_select_markdown`** - Extract elements matching a CSS selector as Markdown
+- **`yunagi_convert`** - Fetch a URL, extract main content, and convert to Markdown
+- **`yunagi_select`** - Extract elements matching a CSS selector as HTML
+- **`yunagi_select_markdown`** - Extract elements matching a CSS selector as Markdown
 
 ### Setup for Claude Desktop
 
 ```json
 {
   "mcpServers": {
-    "kaji": {
-      "command": "node",
-      "args": ["/path/to/kaji/packages/mcp/dist/index.js"]
+    "yunagi": {
+      "command": "npx",
+      "args": ["@yunagi/mcp"]
     }
   }
 }

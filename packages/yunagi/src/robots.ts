@@ -142,7 +142,7 @@ export function isAllowed(rules: RobotsTxtRules, userAgent: string, path: string
 
 // ─── Fetcher ───
 
-const USER_AGENT = "kaji/0.1";
+const USER_AGENT = "yunagi/0.1";
 
 /**
  * Fetch and parse robots.txt for the given origin.

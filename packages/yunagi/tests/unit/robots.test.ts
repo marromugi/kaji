@@ -68,68 +68,68 @@ describe("parseRobotsTxt", () => {
 describe("isAllowed", () => {
   describe("basic allow / disallow", () => {
     it("should allow when no rules exist", () => {
-      expect(allowed("", "kaji/0.1", "/anything")).toBe(true);
+      expect(allowed("", "yunagi/0.1", "/anything")).toBe(true);
     });
 
     it("should disallow a matching path", () => {
-      expect(allowed("User-agent: *\nDisallow: /private/", "kaji/0.1", "/private/page")).toBe(
+      expect(allowed("User-agent: *\nDisallow: /private/", "yunagi/0.1", "/private/page")).toBe(
         false,
       );
     });
 
     it("should allow a non-matching path", () => {
-      expect(allowed("User-agent: *\nDisallow: /private/", "kaji/0.1", "/public/page")).toBe(true);
+      expect(allowed("User-agent: *\nDisallow: /private/", "yunagi/0.1", "/public/page")).toBe(true);
     });
 
     it("should disallow root disallow", () => {
-      expect(allowed("User-agent: *\nDisallow: /", "kaji/0.1", "/anything")).toBe(false);
+      expect(allowed("User-agent: *\nDisallow: /", "yunagi/0.1", "/anything")).toBe(false);
     });
   });
 
   describe("specificity", () => {
     it("should prefer the more specific rule", () => {
       const body = `User-agent: *\nDisallow: /private/\nAllow: /private/public/`;
-      expect(allowed(body, "kaji/0.1", "/private/secret")).toBe(false);
-      expect(allowed(body, "kaji/0.1", "/private/public/page")).toBe(true);
+      expect(allowed(body, "yunagi/0.1", "/private/secret")).toBe(false);
+      expect(allowed(body, "yunagi/0.1", "/private/public/page")).toBe(true);
     });
 
     it("should prefer allow when specificity is equal", () => {
       const body = `User-agent: *\nDisallow: /path\nAllow: /path`;
-      expect(allowed(body, "kaji/0.1", "/path")).toBe(true);
+      expect(allowed(body, "yunagi/0.1", "/path")).toBe(true);
     });
   });
 
   describe("user-agent matching", () => {
     it("should match a specific user-agent over wildcard", () => {
-      const body = `User-agent: kaji\nDisallow: /blocked/\n\nUser-agent: *\nAllow: /`;
-      expect(allowed(body, "kaji/0.1", "/blocked/page")).toBe(false);
+      const body = `User-agent: yunagi\nDisallow: /blocked/\n\nUser-agent: *\nAllow: /`;
+      expect(allowed(body, "yunagi/0.1", "/blocked/page")).toBe(false);
     });
 
     it("should fall back to wildcard group", () => {
       const body = `User-agent: googlebot\nDisallow: /\n\nUser-agent: *\nDisallow: /secret/`;
-      expect(allowed(body, "kaji/0.1", "/public")).toBe(true);
-      expect(allowed(body, "kaji/0.1", "/secret/file")).toBe(false);
+      expect(allowed(body, "yunagi/0.1", "/public")).toBe(true);
+      expect(allowed(body, "yunagi/0.1", "/secret/file")).toBe(false);
     });
 
     it("should allow when no matching group exists and no wildcard", () => {
       const body = `User-agent: googlebot\nDisallow: /`;
-      expect(allowed(body, "kaji/0.1", "/anything")).toBe(true);
+      expect(allowed(body, "yunagi/0.1", "/anything")).toBe(true);
     });
   });
 
   describe("wildcard patterns in paths", () => {
     it("should match * in path pattern", () => {
       const body = `User-agent: *\nDisallow: /private/*/secret`;
-      expect(allowed(body, "kaji/0.1", "/private/foo/secret")).toBe(false);
-      expect(allowed(body, "kaji/0.1", "/private/bar/secret")).toBe(false);
-      expect(allowed(body, "kaji/0.1", "/private/foo/public")).toBe(true);
+      expect(allowed(body, "yunagi/0.1", "/private/foo/secret")).toBe(false);
+      expect(allowed(body, "yunagi/0.1", "/private/bar/secret")).toBe(false);
+      expect(allowed(body, "yunagi/0.1", "/private/foo/public")).toBe(true);
     });
 
     it("should match $ end anchor", () => {
       const body = `User-agent: *\nDisallow: /*.pdf$`;
-      expect(allowed(body, "kaji/0.1", "/docs/file.pdf")).toBe(false);
-      expect(allowed(body, "kaji/0.1", "/docs/file.pdf?ref=1")).toBe(true);
-      expect(allowed(body, "kaji/0.1", "/docs/file.html")).toBe(true);
+      expect(allowed(body, "yunagi/0.1", "/docs/file.pdf")).toBe(false);
+      expect(allowed(body, "yunagi/0.1", "/docs/file.pdf?ref=1")).toBe(true);
+      expect(allowed(body, "yunagi/0.1", "/docs/file.html")).toBe(true);
     });
   });
 });

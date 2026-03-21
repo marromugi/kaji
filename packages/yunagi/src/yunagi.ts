@@ -2,7 +2,7 @@ import { Tokenizer } from "./parser/tokenizer.js";
 import { TreeBuilder } from "./parser/tree-builder.js";
 import { extract } from "./extractor/index.js";
 import { MarkdownConverter } from "./converter/converter.js";
-import { KajiOptions, KajiResult } from "./types.js";
+import { YunagiOptions, YunagiResult } from "./types.js";
 import { checkRobotsTxt } from "./robots.js";
 import { loadConfig, mergeConfig } from "./config.js";
 
@@ -15,16 +15,16 @@ import { loadConfig, mergeConfig } from "./config.js";
  *   - With `force: true`, a warning is logged and fetching proceeds
  *     (the result will have `robotsTxtBlocked: true`).
  *
- * When a `kaji.config.json` exists in the current directory (or `options.config`
+ * When a `yunagi.config.json` exists in the current directory (or `options.config`
  * points to a config file), it is loaded and merged with the provided options.
  */
 export async function toMarkdown(
   url: string,
-  options?: KajiOptions & { force?: boolean },
-): Promise<KajiResult> {
+  options?: YunagiOptions & { force?: boolean },
+): Promise<YunagiResult> {
   // Load and merge config file
   const config = loadConfig(options?.config);
-  const opts: KajiOptions & { force?: boolean } = config
+  const opts: YunagiOptions & { force?: boolean } = config
     ? { ...mergeConfig(config, options), force: options?.force }
     : (options ?? {});
 
@@ -34,7 +34,7 @@ export async function toMarkdown(
     const allowed = await checkRobotsTxt(url);
     if (!allowed) {
       if (opts.force) {
-        console.warn(`kaji: robots.txt disallows access to ${url} (proceeding with --force)`);
+        console.warn(`yunagi: robots.txt disallows access to ${url} (proceeding with --force)`);
         robotsTxtBlocked = true;
       } else {
         throw new Error(
@@ -45,7 +45,7 @@ export async function toMarkdown(
   }
 
   const response = await fetch(url, {
-    headers: { "User-Agent": "kaji/0.1" },
+    headers: { "User-Agent": "yunagi/0.1" },
   });
   if (!response.ok) {
     throw new Error(`Failed to fetch ${url}: ${response.status}`);
@@ -66,8 +66,8 @@ export async function toMarkdown(
  */
 function resolveSiteRules(
   url: string,
-  options?: KajiOptions & { force?: boolean },
-): KajiOptions & { force?: boolean } {
+  options?: YunagiOptions & { force?: boolean },
+): YunagiOptions & { force?: boolean } {
   if (!options?.siteRules?.length) return options ?? {};
 
   const mergedRemove = [...(options.remove ?? [])];
@@ -97,7 +97,7 @@ function resolveSiteRules(
  * Extract main content from an HTML string and return Markdown.
  * This is the synchronous core — no network IO.
  */
-export function htmlToMarkdown(html: string, options?: KajiOptions): KajiResult {
+export function htmlToMarkdown(html: string, options?: YunagiOptions): YunagiResult {
   // 1. Parse
   const tokenizer = new Tokenizer(html);
   const tokens = tokenizer.tokenize();

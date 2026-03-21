@@ -12,7 +12,7 @@ function mockFetch(html: string, status = 200) {
   );
 }
 
-describe("kaji-mcp server", () => {
+describe("yunagi-mcp server", () => {
   let client: Client;
   let cleanup: () => Promise<void>;
 
@@ -43,28 +43,28 @@ describe("kaji-mcp server", () => {
     it("should list all 4 tools", async () => {
       const { tools } = await client.listTools();
       const names = tools.map((t) => t.name);
-      expect(names).toContain("kaji_convert");
-      expect(names).toContain("kaji_select");
-      expect(names).toContain("kaji_select_markdown");
-      expect(names).toContain("kaji_config");
+      expect(names).toContain("yunagi_convert");
+      expect(names).toContain("yunagi_select");
+      expect(names).toContain("yunagi_select_markdown");
+      expect(names).toContain("yunagi_config");
       expect(tools).toHaveLength(4);
     });
 
-    it("kaji_convert should have url as required parameter", async () => {
+    it("yunagi_convert should have url as required parameter", async () => {
       const { tools } = await client.listTools();
-      const tool = tools.find((t) => t.name === "kaji_convert")!;
+      const tool = tools.find((t) => t.name === "yunagi_convert")!;
       expect(tool.inputSchema.required).toContain("url");
     });
 
-    it("kaji_select should have url and selector as required parameters", async () => {
+    it("yunagi_select should have url and selector as required parameters", async () => {
       const { tools } = await client.listTools();
-      const tool = tools.find((t) => t.name === "kaji_select")!;
+      const tool = tools.find((t) => t.name === "yunagi_select")!;
       expect(tool.inputSchema.required).toContain("url");
       expect(tool.inputSchema.required).toContain("selector");
     });
   });
 
-  describe("kaji_convert", () => {
+  describe("yunagi_convert", () => {
     it("should convert a page to markdown", async () => {
       const html = `
         <html>
@@ -75,7 +75,7 @@ describe("kaji-mcp server", () => {
               <p>This is a test article with enough content to pass the character threshold.
               We need to make sure the content is long enough for the extractor to pick it up.
               Adding more text here to ensure we have sufficient content for extraction.
-              The kaji extractor uses a character threshold to determine valid content.
+              The yunagi extractor uses a character threshold to determine valid content.
               This paragraph should contain enough text to meet that threshold easily.
               More content is always better for testing purposes and ensures reliability.
               Let us add even more text to be absolutely certain this works correctly.</p>
@@ -85,7 +85,7 @@ describe("kaji-mcp server", () => {
       mockFetch(html);
 
       const result = await client.callTool({
-        name: "kaji_convert",
+        name: "yunagi_convert",
         arguments: { url: "https://example.com/article" },
       });
 
@@ -109,7 +109,7 @@ describe("kaji-mcp server", () => {
               <p>This is a test article with enough content to pass the character threshold.
               We need to make sure the content is long enough for the extractor to pick it up.
               Adding more text here to ensure we have sufficient content for extraction.
-              The kaji extractor uses a character threshold to determine valid content.
+              The yunagi extractor uses a character threshold to determine valid content.
               This paragraph should contain enough text to meet that threshold easily.
               More content is always better for testing purposes and ensures reliability.</p>
             </article>
@@ -118,7 +118,7 @@ describe("kaji-mcp server", () => {
       mockFetch(html);
 
       const result = await client.callTool({
-        name: "kaji_convert",
+        name: "yunagi_convert",
         arguments: { url: "https://example.com/article" },
       });
 
@@ -131,7 +131,7 @@ describe("kaji-mcp server", () => {
       mockFetch("Not Found", 404);
 
       const result = await client.callTool({
-        name: "kaji_convert",
+        name: "yunagi_convert",
         arguments: { url: "https://example.com/missing" },
       });
 
@@ -139,7 +139,7 @@ describe("kaji-mcp server", () => {
     });
   });
 
-  describe("kaji_select", () => {
+  describe("yunagi_select", () => {
     it("should select elements by CSS selector", async () => {
       const html = `
         <html>
@@ -154,7 +154,7 @@ describe("kaji-mcp server", () => {
       mockFetch(html);
 
       const result = await client.callTool({
-        name: "kaji_select",
+        name: "yunagi_select",
         arguments: { url: "https://example.com", selector: ".item" },
       });
 
@@ -170,7 +170,7 @@ describe("kaji-mcp server", () => {
       mockFetch(html);
 
       const result = await client.callTool({
-        name: "kaji_select",
+        name: "yunagi_select",
         arguments: { url: "https://example.com", selector: ".nonexistent" },
       });
 
@@ -188,7 +188,7 @@ describe("kaji-mcp server", () => {
       mockFetch(html);
 
       const result = await client.callTool({
-        name: "kaji_select",
+        name: "yunagi_select",
         arguments: { url: "https://example.com", selector: "a" },
       });
 
@@ -199,7 +199,7 @@ describe("kaji-mcp server", () => {
     });
   });
 
-  describe("kaji_select_markdown", () => {
+  describe("yunagi_select_markdown", () => {
     it("should select elements and convert to markdown", async () => {
       const html = `
         <html>
@@ -213,7 +213,7 @@ describe("kaji-mcp server", () => {
       mockFetch(html);
 
       const result = await client.callTool({
-        name: "kaji_select_markdown",
+        name: "yunagi_select_markdown",
         arguments: { url: "https://example.com", selector: ".content" },
       });
 
@@ -229,7 +229,7 @@ describe("kaji-mcp server", () => {
       mockFetch(html);
 
       const result = await client.callTool({
-        name: "kaji_select_markdown",
+        name: "yunagi_select_markdown",
         arguments: { url: "https://example.com", selector: ".missing" },
       });
 
@@ -248,7 +248,7 @@ describe("kaji-mcp server", () => {
       mockFetch(html);
 
       const result = await client.callTool({
-        name: "kaji_select_markdown",
+        name: "yunagi_select_markdown",
         arguments: { url: "https://example.com", selector: ".block" },
       });
 
@@ -272,7 +272,7 @@ describe("kaji-mcp server", () => {
       mockFetch(html);
 
       const result = await client.callTool({
-        name: "kaji_select_markdown",
+        name: "yunagi_select_markdown",
         arguments: { url: "https://example.com", selector: ".card" },
       });
 

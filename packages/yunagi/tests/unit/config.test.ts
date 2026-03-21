@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { writeFileSync, mkdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { loadConfig, mergeConfig } from "../../src/config.js";
-import type { KajiConfig, KajiOptions } from "../../src/types.js";
+import type { YunagiConfig, YunagiOptions } from "../../src/types.js";
 
 const TMP_DIR = join(import.meta.dirname, "__tmp_config_test__");
 
@@ -18,7 +18,7 @@ describe("loadConfig", () => {
   afterEach(() => rmSync(TMP_DIR, { recursive: true, force: true }));
 
   it("should load a config file by explicit path", () => {
-    const config: KajiConfig = {
+    const config: YunagiConfig = {
       charThreshold: 300,
       siteRules: [{ url: "example.com", remove: [".ad"] }],
     };
@@ -43,9 +43,9 @@ describe("loadConfig", () => {
     }
   });
 
-  it("should auto-detect kaji.config.json in CWD", () => {
-    const config: KajiConfig = { keepImages: false };
-    writeJson(TMP_DIR, "kaji.config.json", config);
+  it("should auto-detect yunagi.config.json in CWD", () => {
+    const config: YunagiConfig = { keepImages: false };
+    writeJson(TMP_DIR, "yunagi.config.json", config);
     const origCwd = process.cwd();
     process.chdir(TMP_DIR);
     try {
@@ -70,7 +70,7 @@ describe("loadConfig", () => {
 
 describe("mergeConfig", () => {
   it("should use config values when no options provided", () => {
-    const config: KajiConfig = {
+    const config: YunagiConfig = {
       charThreshold: 300,
       keepImages: false,
     };
@@ -80,18 +80,18 @@ describe("mergeConfig", () => {
   });
 
   it("should let options override config scalar values", () => {
-    const config: KajiConfig = { charThreshold: 300, keepImages: false };
-    const options: KajiOptions = { charThreshold: 800 };
+    const config: YunagiConfig = { charThreshold: 300, keepImages: false };
+    const options: YunagiOptions = { charThreshold: 800 };
     const result = mergeConfig(config, options);
     expect(result.charThreshold).toBe(800);
     expect(result.keepImages).toBe(false);
   });
 
   it("should shallow-merge converter options", () => {
-    const config: KajiConfig = {
+    const config: YunagiConfig = {
       converter: { headingStyle: "setext", bulletListMarker: "-" },
     };
-    const options: KajiOptions = {
+    const options: YunagiOptions = {
       converter: { bulletListMarker: "+" },
     };
     const result = mergeConfig(config, options);
@@ -102,10 +102,10 @@ describe("mergeConfig", () => {
   });
 
   it("should concatenate siteRules (options first, then config)", () => {
-    const config: KajiConfig = {
+    const config: YunagiConfig = {
       siteRules: [{ url: "config.com", remove: [".ad"] }],
     };
-    const options: KajiOptions = {
+    const options: YunagiOptions = {
       siteRules: [{ url: "option.com", select: "main" }],
     };
     const result = mergeConfig(config, options);
@@ -115,21 +115,21 @@ describe("mergeConfig", () => {
   });
 
   it("should concatenate remove selectors", () => {
-    const config: KajiConfig = { remove: [".config-remove"] };
-    const options: KajiOptions = { remove: [".option-remove"] };
+    const config: YunagiConfig = { remove: [".config-remove"] };
+    const options: YunagiOptions = { remove: [".option-remove"] };
     const result = mergeConfig(config, options);
     expect(result.remove).toEqual([".option-remove", ".config-remove"]);
   });
 
   it("should concatenate include selectors", () => {
-    const config: KajiConfig = { include: [".config-include"] };
-    const options: KajiOptions = { include: [".option-include"] };
+    const config: YunagiConfig = { include: [".config-include"] };
+    const options: YunagiOptions = { include: [".option-include"] };
     const result = mergeConfig(config, options);
     expect(result.include).toEqual([".option-include", ".config-include"]);
   });
 
   it("should handle config-only arrays without options", () => {
-    const config: KajiConfig = {
+    const config: YunagiConfig = {
       siteRules: [{ url: "example.com", remove: [".sidebar"] }],
       remove: [".nav"],
     };
@@ -139,8 +139,8 @@ describe("mergeConfig", () => {
   });
 
   it("should not create empty arrays when neither side has values", () => {
-    const config: KajiConfig = { charThreshold: 500 };
-    const options: KajiOptions = { keepImages: true };
+    const config: YunagiConfig = { charThreshold: 500 };
+    const options: YunagiOptions = { keepImages: true };
     const result = mergeConfig(config, options);
     expect(result.siteRules).toBeUndefined();
     expect(result.remove).toBeUndefined();

@@ -152,8 +152,8 @@ export interface SiteRuleConfig {
   select?: string;
 }
 
-/** JSON-serializable configuration loaded from `kaji.config.json`. */
-export interface KajiConfig {
+/** JSON-serializable configuration loaded from `yunagi.config.json`. */
+export interface YunagiConfig {
   charThreshold?: number;
   nTopCandidates?: number;
   converter?: Partial<ConverterOptions>;
@@ -169,12 +169,12 @@ export interface KajiConfig {
   siteRules?: SiteRuleConfig[];
 }
 
-export interface KajiOptions {
+export interface YunagiOptions {
   charThreshold?: number;
   nTopCandidates?: number;
   converter?: Partial<ConverterOptions>;
   keepImages?: boolean;
-  /** Check robots.txt before fetching (only applies to `kaji()`, not `kajiFromHtml()`). */
+  /** Check robots.txt before fetching (only applies to `yunagi()`, not `yunagiFromHtml()`). */
   respectRobotsTxt?: boolean;
   /** CSS-like selectors for elements to force-remove before extraction. */
   remove?: string[];
@@ -182,13 +182,13 @@ export interface KajiOptions {
   include?: string[];
   /** CSS-like selector for the main content container (bypasses heuristic scoring). */
   select?: string;
-  /** URL-pattern-matched rules (only effective with `kaji()`, ignored by `kajiFromHtml()`). */
+  /** URL-pattern-matched rules (only effective with `yunagi()`, ignored by `yunagiFromHtml()`). */
   siteRules?: SiteRule[];
-  /** Path to a config file. If omitted, `kaji.config.json` in CWD is used when found. */
+  /** Path to a config file. If omitted, `yunagi.config.json` in CWD is used when found. */
   config?: string;
 }
 
-export interface KajiResult {
+export interface YunagiResult {
   title: string;
   markdown: string;
   excerpt: string;

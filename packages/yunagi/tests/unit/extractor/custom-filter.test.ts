@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { extract } from "../../../src/extractor/index.js";
-import { htmlToMarkdown } from "../../../src/kaji.js";
+import { htmlToMarkdown } from "../../../src/yunagi.js";
 import { Tokenizer } from "../../../src/parser/tokenizer.js";
 import { TreeBuilder } from "../../../src/parser/tree-builder.js";
 import { getTextContent } from "../../../src/parser/nodes.js";

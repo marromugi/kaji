@@ -1,8 +1,8 @@
 import { parseArgs } from "node:util";
 import { readFileSync, writeFileSync } from "node:fs";
-import { toMarkdown, htmlToMarkdown } from "./kaji.js";
+import { toMarkdown, htmlToMarkdown } from "./yunagi.js";
 import { loadConfig, mergeConfig } from "./config.js";
-import type { KajiOptions, ConverterOptions } from "./types.js";
+import type { YunagiOptions, ConverterOptions } from "./types.js";
 
 const { values, positionals } = parseArgs({
   allowPositionals: true,
@@ -23,7 +23,7 @@ const { values, positionals } = parseArgs({
 });
 
 function printHelp() {
-  console.log(`Usage: kaji <url-or-file> [options]
+  console.log(`Usage: yunagi <url-or-file> [options]
 
 Extract main content from web pages and convert to Markdown.
 
@@ -34,7 +34,7 @@ Options:
   -h, --help              Show this help
   -v, --version           Show version
   -o, --output FILE       Write output to file
-  -c, --config FILE       Path to config file (default: ./kaji.config.json)
+  -c, --config FILE       Path to config file (default: ./yunagi.config.json)
   --stdin                 Read HTML from stdin
   --heading-style         Heading style: atx (default) or setext
   --bullet-marker         Bullet marker: - (default), *, or +
@@ -45,17 +45,17 @@ Options:
   --select SELECTOR       Use specific element as content container
 
 Examples:
-  kaji https://example.com/article
-  kaji page.html
-  kaji https://example.com -o article.md
-  kaji https://example.com --respect-robots-txt
-  kaji https://example.com --respect-robots-txt --force
-  kaji https://zenn.dev/article --remove ".topic-badge" --remove ".author-card"
-  kaji https://example.com --select "article.main-content"
-  cat page.html | kaji --stdin`);
+  yunagi https://example.com/article
+  yunagi page.html
+  yunagi https://example.com -o article.md
+  yunagi https://example.com --respect-robots-txt
+  yunagi https://example.com --respect-robots-txt --force
+  yunagi https://zenn.dev/article --remove ".topic-badge" --remove ".author-card"
+  yunagi https://example.com --select "article.main-content"
+  cat page.html | yunagi --stdin`);
 }
 
-function buildOptions(): KajiOptions {
+function buildOptions(): YunagiOptions {
   const converter: Partial<ConverterOptions> = {};
   if (values["heading-style"] === "setext") {
     converter.headingStyle = "setext";
@@ -67,7 +67,7 @@ function buildOptions(): KajiOptions {
   ) {
     converter.bulletListMarker = values["bullet-marker"];
   }
-  const cliOpts: KajiOptions = { converter };
+  const cliOpts: YunagiOptions = { converter };
   if (values.remove?.length) cliOpts.remove = values.remove;
   if (values.include?.length) cliOpts.include = values.include;
   if (values.select) cliOpts.select = values.select;
@@ -92,7 +92,7 @@ async function main() {
   }
 
   if (values.version) {
-    console.log("kaji 0.1.0");
+    console.log("yunagi 0.1.0");
     return;
   }
 
@@ -130,6 +130,6 @@ async function main() {
 }
 
 main().catch((err) => {
-  console.error(`kaji: ${(err as Error).message}`);
+  console.error(`yunagi: ${(err as Error).message}`);
   process.exit(1);
 });
