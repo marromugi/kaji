@@ -54,13 +54,8 @@ git diff --staged
 
 変更の影響範囲を示します。このプロジェクトでは以下のスコープを使用できます：
 
-- `core`: @babble/core パッケージ
-- `cli`: @babble/cli パッケージ
-- `llm-claude`: @babble/llm-claude パッケージ
-- `llm-ollama`: @babble/llm-ollama パッケージ
-- `llm-openrouter`: @babble/llm-openrouter パッケージ
-- `provider-kokoro`: @babble/provider-kokoro パッケージ
-- `provider-voicebox`: @babble/provider-voicebox パッケージ
+- `yunagi`: yunagi パッケージ（packages/yunagi）
+- `mcp`: @yunagi/mcp パッケージ（packages/mcp）
 - `deps`: 依存関係の更新
 - `config`: 設定ファイルの変更
 

@@ -15,7 +15,7 @@ import {
   type KElementNode,
   type KDocumentNode,
   type KajiConfig,
-} from "@kaji/core";
+} from "yunagi";
 
 const VOID_ELEMENTS = new Set([
   "area",

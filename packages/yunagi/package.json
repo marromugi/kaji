@@ -1,5 +1,5 @@
 {
-  "name": "@kaji/core",
+  "name": "yunagi",
   "version": "0.1.0",
   "description": "Extract main content from web pages and convert to Markdown",
   "type": "module",
@@ -14,7 +14,7 @@
     }
   },
   "bin": {
-    "kaji": "./dist/cli.js"
+    "yunagi": "dist/cli.js"
   },
   "files": [
     "dist"
@@ -34,7 +34,18 @@
     "web-scraping"
   ],
   "license": "MIT",
+  "author": "marromugi",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marromugi/kaji.git",
+    "directory": "packages/yunagi"
+  },
+  "homepage": "https://github.com/marromugi/kaji/tree/main/packages/yunagi",
+  "bugs": {
+    "url": "https://github.com/marromugi/kaji/issues"
+  },
   "devDependencies": {
+    "@types/node": "^25.5.0",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
     "vitest": "^4"
